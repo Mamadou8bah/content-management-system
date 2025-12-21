@@ -1,0 +1,69 @@
+<div class="flex items-center justify-center bg-white p-3 min-h-screen  selection:bg-emerald-200">
+  <div class="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-[2rem] shadow-2xl overflow-hidden min-h-[650px] relative transition-all duration-500">
+    
+    <div 
+      class="w-full md:w-3/5 p-4 md:p-12 flex flex-col justify-between z-10 bg-white transition-all duration-500"
+      [ngClass]="isLoginMode ? 'md:order-1' : 'md:order-2'"
+    >
+   
+    <div class="flex flex-col justify-center items-center m-0 py-0">
+        <div class="w-[10rem] h-[10rem]  flex items-center justify-center">
+            <img class="h-full w-full object-cover" src="logo.png" alt="">
+        </div>
+    </div>  
+
+      <div class="flex-grow flex flex-col justify-center items-center text-center py-0 m-0">
+        <h2 class="text-3xl md:text-4xl font-bold text-yellow-500 mb-3 mt-0">
+          {{ isLoginMode ? 'Signin to Your Account' : 'Create Account' }}
+        </h2>
+        <div class="w-16 h-1.5 bg-yellow-500 mb-3 rounded-full"></div>
+
+        <p class="text-gray-400 text-sm my-1">
+          {{ isLoginMode ? 'Enter your email and password to sign in' : 'Fill in your details to get started' }}
+        </p>
+
+        <form class="w-full max-w-sm space-y-5">
+          
+          <div *ngIf="!isLoginMode" class="flex flex-col items-center mb-4">
+            <div class="relative group cursor-pointer">
+              <div class="w-20 h-20 bg-gray-100 rounded-full border-2 border-dashed border-yellow-400 flex items-center justify-center overflow-hidden">
+                <img *ngIf="profileImage" [src]="profileImage" class="absolute inset-0 w-full h-full object-cover">
+                <span *ngIf="!profileImage" class="text-[1.8rem] text-yellow-600 font-bold uppercase">+</span>
+              </div>
+              <input type="file" (change)="onFileSelected($event)" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+            </div>
+          </div>
+
+       
+          <input *ngIf="!isLoginMode" type="text" placeholder="Full Name" class="w-full px-5 py-3.5 bg-slate-50 rounded-2xl focus:outline-none focus:border-2 focus:border-yellow-200">
+            <input type="email" placeholder="Email" class="w-full px-5 py-3.5 bg-slate-50 rounded-2xl focus:outline-none focus:border-2 focus:border-yellow-200">
+          
+
+          <input type="password" placeholder="Password" class="w-full px-5 py-3.5 bg-slate-50 rounded-2xl focus:outline-none focus:border-2 focus:border-yellow-200">
+
+          
+
+          <button type="submit" class="w-52 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3.5 rounded-full mt-6  uppercase text-sm tracking-wider">
+            {{ isLoginMode ? 'Sign In' : 'Sign Up' }}
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <div 
+      class="w-full md:w-2/5 bg-yellow-500 text-white flex flex-col items-center justify-center p-12 text-center transition-all duration-500 z-20"
+      [ngClass]="isLoginMode ? 'md:order-2' : 'md:order-1'"
+    >
+      <h2 class="text-4xl font-extrabold mb-4">{{ isLoginMode ? 'Welcome' : 'Hello Friend!' }}</h2>
+      <div class="w-16 h-1.5 bg-white mb-8 rounded-full"></div>
+      <p class="text-lg font-light mb-12">
+        {{ isLoginMode ? 'Fill up your Personal information and start journey with us!' : 'Enter your personal details and start your journey with us today.' }}
+      </p>
+      <button (click)="toggleMode()" class="px-14 py-3.5 border-2 border-white rounded-full font-bold uppercase text-xs tracking-widest hover:bg-white hover:text-black transition-all">
+        {{ isLoginMode ? 'Sign Up' : 'Sign In' }}
+      </button>
+    </div>
+
+  </div>
+</div>

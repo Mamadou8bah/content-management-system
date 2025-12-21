@@ -1,0 +1,63 @@
+<div class="min-h-screen flex bg-gray-50">
+  
+  <aside
+    *ngIf="!isLoginPage()"
+    class="shrink-0 transition-all duration-200"
+    [class.w-0]="!isSidebarOpen()"
+    [class.overflow-hidden]="!isSidebarOpen()"
+  >
+    <div [class.hidden]="!isSidebarOpen()" class="w-64"> <app-navbar></app-navbar>
+    </div>
+  </aside>
+
+  <div class="flex-1 flex flex-col min-w-0 h-screen">
+    
+    <header *ngIf="!isLoginPage()" class="h-14 sm:h-16 bg-white border-b border-gray-200 shrink-0">
+      <div class="h-full px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4">
+        
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+          <button
+            type="button"
+            (click)="toggleSidebar()"
+            class="h-9 w-9 sm:h-10 sm:w-10 inline-flex items-center justify-center rounded-full text-gray-600 hover:bg-gray-100"
+          >
+            <svg
+              class="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-200"
+              [class.rotate-180]="!isSidebarOpen()"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path d="M17 18l-6-6 6-6M13 18l-6-6 6-6M9 18l-6-6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <img class="h-8 sm:h-10 w-auto object-contain" src="logo2.png" alt="Logo" />
+        </div>
+
+        <div class="flex-1 flex items-center justify-center min-w-0">
+          <div class="w-full max-w-md relative">
+            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M11 19a8 8 0 110-16 8 8 0 010 16z" stroke-width="2"/></svg>
+            </span>
+            <input type="text" placeholder="Search..." class="w-full rounded-full border border-gray-200 bg-gray-50 py-2 pl-9 focus:ring-2 focus:ring-green-200 outline-none text-sm">
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+          
+          <div class="flex items-center gap-2">
+            <span class="hidden md:block text-sm font-semibold">Hi, Sara</span>
+            <img class="h-9 w-9 rounded-full object-cover" src="https://static.vecteezy.com/system/resources/thumbnails/074/189/886/small/an-expressive-black-woman-gazes-thoughtfully-illuminated-by-soft-evening-light-photo.jpeg" alt="User">
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main 
+      class="flex-1 min-w-0 overflow-y-auto"
+      [ngClass]="isLoginPage() ? 'bg-white p-0' : 'bg-gray-50 p-3 sm:p-6'"
+    >
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

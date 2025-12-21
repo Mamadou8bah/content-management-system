@@ -1,0 +1,194 @@
+<section class="max-w-6xl mx-auto p-8 bg-white min-h-screen flex justify-center items-center flex-col rounded-[3rem]">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 w-full">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Articles Library</h1>
+      <p class="text-sm text-gray-500">Manage, edit, and monitor your published content.</p>
+    </div>
+    
+    <button class="flex items-center gap-2 bg-black hover:bg-gray-800 text-white px-5 py-2.5 rounded-full transition-all active:scale-95 font-medium text-sm shadow-sm" (click)="togglePosting()">
+      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Create Article
+    </button>
+  </div>
+
+  <div class="flex flex-col sm:flex-row items-center gap-4 mb-6 w-full">
+    <div class="relative w-full sm:w-80">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </span>
+      <input
+        type="text"
+        placeholder="Search by title or author..."
+        class="block w-full rounded-xl border border-gray-200 py-2.5 pl-10 pr-4 text-sm  outline-none transition-all"
+      />
+    </div>
+
+    <div class="flex items-center gap-2 w-full sm:w-auto">
+      <div class="relative w-full sm:w-48">
+        <select id="filter" class="appearance-none block w-full border border-gray-200 text-gray-700 py-2.5 px-4 pr-10 rounded-xl text-sm  outline-none cursor-pointer transition-all">
+          <option disabled selected>Filter by...</option>
+          <option>Date Created</option>
+          <option>Author</option>
+          <option>Category</option>
+        </select>
+        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 border-l border-gray-200 my-2 ml-2">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overflow-hidden border-2 border-gray-300 rounded-2xl  bg-white">
+    <table class="w-full text-left border-collapse  shadow-md">
+      <thead class=" border-b border-gray-200">
+        <tr>
+          <th class="px-6 py-4 text-xs font-normal text-gray-500 uppercase tracking-wider">Image</th>
+          <th class="px-6 py-4 text-xs font-normal text-gray-500 uppercase tracking-wider">Article Title</th>
+          <th class="px-6 py-4 text-xs font-normal text-gray-500 uppercase tracking-wider">Author</th>
+          <th class="px-6 py-4 text-xs font-normal text-gray-500 uppercase tracking-wider">Status</th>
+          <th class="px-6 py-4 text-xs font-normal text-gray-500 uppercase tracking-wider text-right">Action</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <tr *ngFor="let article of articles" class="hover:bg-gray-50/50 transition-colors group">
+          <td class="px-6 py-4 whitespace-nowrap">
+            <img [src]="article.imageUrl" alt="" class="h-[6rem] w-[12rem] object-cover rounded-lg ring-1 ring-gray-200 shadow-sm"/>
+          </td>
+          
+          <td class="px-6 py-4 cursor-pointer" [routerLink]="['/articles', article.id]">
+            <div class=" font-semibold text-gray-900">{{ article.title }}</div>
+          </td>
+
+          <td class="px-6 py-4 text-gray-600  font-bold">
+            {{ article.publishedBy }}
+          </td>
+
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full  font-semibold">
+              
+              {{ article.status }}
+            </span>
+          </td>
+
+          <td class="px-6 py-4 text-right relative">
+            <button (click)="openPostMenu(article)" 
+                    class="p-2 hover:bg-gray-200 rounded-full transition-all text-gray-400 hover:text-gray-600 focus:outline-none">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+              </svg>
+            </button>
+
+            <div *ngIf="article.isMenuOpen" 
+                 class="absolute right-16 top-0 mt-2 w-48 bg-white shadow-2xl border border-gray-100 rounded-xl z-50 overflow-hidden flex flex-col py-1.5 origin-top-right transition-all" (pointerDownOutside)="openPostMenu(article)">
+              
+              <button (click)="shareArticle(article); openPostMenu(article)" 
+                class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                Share Article
+              </button>
+
+              <button (click)="unpublishArticle(article); openPostMenu(article)" 
+                class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                Unpublish
+              </button>
+
+              <div class="h-px bg-gray-100 my-1 mx-2"></div>
+
+              <button (click)="deleteArticle(article); openPostMenu(article)" 
+                class="flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                Delete Article
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody> 
+    </table>
+  </div>
+
+  <div class="bg-white px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Showing <span class="font-semibold">1</span> to 
+                    <span class="font-semibold">8</span> of 
+                    <span class="font-semibold">{{articles.length}}</span> articles
+                </p>
+            </div>
+
+            <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button class="relative inline-flex items-center px-2 py-2 rounded-l-md b text-sm ">
+                <span class="sr-only">Previous</span>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                </button>
+
+                <button class="relative inline-flex items-center px-2 py-2 rounded-r-md   text-sm">
+                <span class="sr-only">Next</span>
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                </svg>
+                </button>
+            </nav>
+            </div>
+        </div>
+
+        
+    </div>
+
+
+     <form [formGroup]="postForm" (ngSubmit)="onSubmit()" *ngIf="isPosting"
+        class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+            w-[95%] max-w-lg p-8 z-[60]
+            bg-white/80 backdrop-blur-xl border border-white/20 
+            shadow-2xl rounded-3xl flex flex-col gap-5">
+
+        <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Post Article</h2>
+        
+        <div class="space-y-1">
+            <label for="title" class="text-sm font-semibold text-gray-600 ml-1">Title</label>
+            <input type="text" id="title" formControlName="title" 
+                placeholder="Give your article a name..."
+                class="w-full p-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all outline-none">
+        </div>
+
+        <div class="space-y-1">
+            <label for="content" class="text-sm font-semibold text-gray-600 ml-1">Content</label>
+            <textarea id="content" formControlName="content" 
+                placeholder="What's on your mind?"
+                class="w-full p-3 bg-white/50 border border-gray-200 rounded-xl h-40 resize-none focus:ring-2 focus:ring-black focus:border-transparent transition-all outline-none"></textarea>
+        </div>
+
+        <div class="space-y-1">
+            <label class="text-sm font-semibold text-gray-600 ml-1">Cover Image</label>
+            <input type="file" id="image" (change)="onFileSelected($event)" 
+                class="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-gray-100 file:text-gray-700
+                    hover:file:bg-gray-200 cursor-pointer">
+        </div>
+
+        <div class="flex justify-end gap-3 mt-4">
+            <button type="button" (click)="togglePosting()"
+                class="px-6 py-2.5 rounded-full font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+                Cancel
+            </button>
+            <button type="submit" 
+                class="px-8 py-2.5 rounded-full font-medium text-white bg-black hover:bg-gray-800 shadow-lg active:scale-95 transition-all">
+                Post Article
+            </button>
+        </div>
+    </form>
+</section>

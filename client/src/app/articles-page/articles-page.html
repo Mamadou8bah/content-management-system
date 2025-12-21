@@ -1,0 +1,136 @@
+<section class="flex justify-center items-center flex-col ">
+    <button (click)="togglePosting()" *ngIf="!isPosting"
+  class="fixed bottom-8 right-8 sm:right-36 z-50 
+         flex items-center justify-center p-4 
+         bg-white text-gray-700 border-2 border-gray-200 rounded-full 
+         shadow-lg hover:shadow-xl hover:scale-110 
+         transition-all duration-200 ease-in-out active:scale-95">
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
+    <p>Explore the latest articles on content flow</p>
+    <div class="flex flex-col w-[100%] sm:w-[90%] rounded-t-[3rem] bg-white">
+        <div *ngFor="let article of articles" class="px-9 flex flex-col justify-center border-b-2 border-gray-200 py-6 relative">
+            <div class="flex flex-row gap-2 items-center m-2">
+                <div class="w-[1rem] h-[1rem] rounded-full">
+                    <img class="w-full h-full object-cover" src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg" alt="">
+                </div>
+                <p class="font-light">In ContentFlow By <span class="font-bold">{{article.publishedBy}}</span></p>
+            </div>
+            <div class="flex flex-row justify-between flex-wrap  items-center ">
+                <div class="w-[36rem] cursor-pointer" [routerLink]="['/articles', article.id]">
+                    <p class="font-bold text-[1.5rem]">{{article.title}}</p>
+                    <p class="text-gray-500">{{article.body.slice(0,180)}}...</p>
+                </div>
+                <div class="w-[15rem] h-[10rem] my-2">
+                    <img class="rounded-2xl h-full w-full" src="{{article.imageUrl}}" alt="">
+                </div>
+            </div>
+
+            <div class="flex flex-row justify-between items-center mt-4">
+                <div class="flex flex-row gap-3">
+                    <p>{{article.date}}</p>
+                </div>
+                <div class=" flex flex-row justify-center items-center gap-3">
+                    
+                    
+                    <div class="w-5 h-5" (click)="openPostMenu(article, $event)">
+                        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M4 8C4 9.10457 3.10457 10 2 10C0.895431 10 0 9.10457 0 8C0 6.89543 0.895431 6 2 6C3.10457 6 4 6.89543 4 8Z" fill="#525252"></path> <path d="M10 8C10 9.10457 9.10457 10 8 10C6.89543 10 6 9.10457 6 8C6 6.89543 6.89543 6 8 6C9.10457 6 10 6.89543 10 8Z" fill="#525252"></path> <path d="M14 10C15.1046 10 16 9.10457 16 8C16 6.89543 15.1046 6 14 6C12.8954 6 12 6.89543 12 8C12 9.10457 12.8954 10 14 10Z" fill="#525252"></path> </g></svg>
+                    </div>
+                </div>
+
+            </div>
+           <div *ngIf="article.isMenuOpen" 
+     class="absolute right-[5rem] bottom-[-5.5rem] z-40 w-48 
+            bg-white border border-gray-100 rounded-xl shadow-xl 
+            flex flex-col py-2 overflow-hidden transition-all duration-200 ease-in-out">
+    
+            <button (click)="shareArticle(article); openPostMenu(article, $event)" 
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                <span class="w-5 h-5 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-full h-full stroke-slate-600">
+                        <path d="M8.25 12C8.25 12.4142 7.91421 12.75 7.5 12.75C7.08579 12.75 6.75 12.4142 6.75 12C6.75 11.5858 7.08579 11.25 7.5 11.25C7.91421 11.25 8.25 11.5858 8.25 12Z M17.25 5.5C17.25 5.91421 16.9142 6.25 16.5 6.25C16.0858 6.25 15.75 5.91421 15.75 5.5C15.75 5.08579 16.0858 4.75 16.5 4.75C16.9142 4.75 17.25 5.08579 17.25 5.5Z M17.25 18.5C17.25 18.9142 16.9142 19.25 16.5 19.25C16.0858 19.25 15.75 18.9142 15.75 18.5C15.75 18.0858 16.0858 17.75 16.5 17.75C16.9142 17.75 17.25 18.0858 17.25 18.5Z M15.165 6.53169L8.98501 10.9683C8.79031 11.1056 8.7553 11.381 8.90594 11.5888L8.98501 11.6817L15.165 16.1183C15.3597 16.2556 15.6217 16.2226 15.7724 16.0148L15.8515 15.9219C16.0021 15.7141 15.9671 15.4387 15.7724 15.3014L10.02 11.35L15.7724 7.40136C15.9671 7.26405 16.0021 6.98866 15.8515 6.78085L15.7724 6.68796C15.6217 6.48015 15.3597 6.44718 15.165 6.58449L15.165 6.53169Z" fill="currentColor"></path>
+                    </svg>
+                </span>
+                <span class="font-medium">Share</span>
+            </button>
+
+            <button (click)="openPostMenu(article, $event)" 
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left">
+                <span class="w-5 h-5 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" class="w-full h-full fill-red-600">
+                        <path d="M20,5 C20.5523,5 21,5.44772 21,6 L21,7 C21,7.55228 20.5523,8 20,8 L19,8 L19,18 C19,19.6569 17.6569,21 16,21 L8,21 C6.34315,21 5,19.6569 5,18 L5,8 L4,8 C3.44772,8 3,7.55228 3,7 L3,6 C3,5.44772 3.44772,5 4,5 L20,5 Z M17,8 L7,8 L7,18 C7,18.5523 7.44772,19 8,19 L16,19 C16.5523,19 17,18.5523 17,18 L17,8 Z M15,11 C15.5523,11 16,11.4477 16,12 L16,16 C16,16.5523 15.5523,17 15,17 C14.4477,17 14,16.5523 14,16 L14,12 C14,11.4477 14.4477,11 15,11 Z M11,11 C11.5523,11 12,11.4477 12,12 L12,16 C12,16.5523 11.5523,17 11,17 C10.4477,17 10,16.5523 10,16 L10,12 C10,11.4477 10.4477,11 11,11 Z" fill="currentColor"></path>
+                    </svg>
+                </span>
+                <span class="font-medium">Delete</span>
+            </button>
+
+            <button (click)="unpublishArticle(article); openPostMenu(article, $event)" 
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left border-t border-gray-50">
+                <span class="w-5 h-5 flex items-center justify-center">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-full h-full stroke-slate-600">
+                        <path d="M4 7H15M4 7C4 5.89543 4.89543 5 6 5H12.5M4 7V18C4 19.1046 4.89543 20 6 20H12.5M15 7L14.5 5.5M15 7V11.5M12.5 5L14.5 5.5M12.5 5V4M14.5 5.5L15.5 4M12.5 20V15.5M12.5 20H18C19.1046 20 20 19.1046 20 18V10C20 8.89543 19.1046 8 18 8H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                    </svg>
+                </span>
+                <span class="font-medium">Unpublish</span>
+            </button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <form [formGroup]="postForm" (ngSubmit)="onSubmit()" *ngIf="isPosting"
+        class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+            w-[95%] max-w-lg p-8 z-[60]
+            bg-white/80 backdrop-blur-xl border border-white/20 
+            shadow-2xl rounded-3xl flex flex-col gap-5">
+
+        <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Post Article</h2>
+        
+        <div class="space-y-1">
+            <label for="title" class="text-sm font-semibold text-gray-600 ml-1">Title</label>
+            <input type="text" id="title" formControlName="title" 
+                placeholder="Give your article a name..."
+                class="w-full p-3 bg-white/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all outline-none">
+        </div>
+
+        <div class="space-y-1">
+            <label for="content" class="text-sm font-semibold text-gray-600 ml-1">Content</label>
+            <textarea id="content" formControlName="content" 
+                placeholder="What's on your mind?"
+                class="w-full p-3 bg-white/50 border border-gray-200 rounded-xl h-40 resize-none focus:ring-2 focus:ring-black focus:border-transparent transition-all outline-none"></textarea>
+        </div>
+
+        <div class="space-y-1">
+            <label class="text-sm font-semibold text-gray-600 ml-1">Cover Image</label>
+            <input type="file" id="image" (change)="onFileSelected($event)" 
+                class="block w-full text-sm text-gray-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-gray-100 file:text-gray-700
+                    hover:file:bg-gray-200 cursor-pointer">
+        </div>
+
+        <div class="flex justify-end gap-3 mt-4">
+            <button type="button" (click)="togglePosting()"
+                class="px-6 py-2.5 rounded-full font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+                Cancel
+            </button>
+            <button type="submit" 
+                class="px-8 py-2.5 rounded-full font-medium text-white bg-black hover:bg-gray-800 shadow-lg active:scale-95 transition-all">
+                Post Article
+            </button>
+        </div>
+    </form>
+
+<div *ngIf="isPosting" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[50]" (click)="togglePosting()"></div>
+
+<div *ngIf="isPosting" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-[50]" (click)="togglePosting()"></div>
+</section>

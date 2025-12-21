@@ -9,9 +9,11 @@ const articleRouter=require('./route/articleRoutes')
 const userRouter=require('./route/userRoutes')
 const cors=require('cors')
 
-app.use(cors())
 
 const app=express()
+
+
+app.use(cors())
  
 app.use(express.json())
 app.use('/auth',authRouter)

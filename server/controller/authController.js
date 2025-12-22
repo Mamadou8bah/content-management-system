@@ -27,6 +27,19 @@ async function loginUser(req,res){
     }
 }
 
+async function getLoggedInUser(req,res){
+    try{
+        const userId=req.user.id;
+        const user= await getUserById(userId);
+        res.status(200).json({
+            user:user
+        })
+    }catch(err){
+        res.status(401).json({
+            error: err.message
+        })
+    }
+}
 async function logoutUser(req,res){
     try{
         const {refreshToken}=req.body;
@@ -61,5 +74,6 @@ module.exports={
     loginUser,
     logoutUser,
     getAccessTokenForUser,
-    revokeTokenForUser
+    revokeTokenForUser,
+    getLoggedInUser
 }

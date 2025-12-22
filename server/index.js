@@ -21,6 +21,10 @@ app.use('/roles',roleRouter)
 app.use('/articles',articleRouter)
 app.use('/users',userRouter)
 
+app.use('/test',(req,res)=>{
+    res.send({message:'API is working'})
+})
+
 
 connectToDb().then(() => {
         return startRolesSeeding()

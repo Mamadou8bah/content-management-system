@@ -3,28 +3,30 @@ const cloudinaryUploader = require('../utils/cloudinaryUploader');
 const bcrypt = require('bcrypt');
 const jwtService=require('../utils/jwtService')
 const dotenv = require('dotenv');
+dotenv.config();
 const RefreshToken=require('../model/RefreshToken');
 const jwt=require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-dotenv.config();
 
 const register = async (userData, image) => {
   const userExist = await User.findOne({ email: userData.email });
-  if (userExist) throw new Error('There is already a user with this email');
+  if (userExist){
+    return res.status(400).json({ error: 'Email already in use' });
+  };
 
   if (!userData.password) throw new Error('Password is required');
 
+
   const saltRounds = parseInt(process.env.SALT_ROUNDS, 10) || 10;
+  
 
   let uploadPromise = null;
   if (image) {
     uploadPromise = cloudinaryUploader.uploadToCloudinary(image).catch(err => {
       console.error('Cloudinary upload failed', err);
-      // Decide if you want to throw an error or just log it and continue without a profile picture
       throw new Error('Failed to upload profile photo');
     });
   }
-
   const passwordHashPromise = bcrypt.hash(userData.password, saltRounds);
 
   const [passwordHash, uploadResult] = await Promise.all([passwordHashPromise, uploadPromise]);
@@ -45,7 +47,7 @@ const register = async (userData, image) => {
 };
 
 const login= async(email,password)=>{
-  const user= await User.findOne({email:email.toLowerCase()});
+  const user= await User.findOne({email:email.toLowerCase()}).populate('roleId');
   if(!user) throw new Error('Invalid email or password');
   const passwordMatch= await bcrypt.compare(password,user.password);
   if(!passwordMatch) throw new Error('Invalid email or password');
@@ -66,7 +68,8 @@ const login= async(email,password)=>{
 
   return {
     accessToken:jwtService.generateAccessToken(user),
-    refreshToken:refreshToken
+    refreshToken:refreshToken,
+    role:user.roleId.name
   };
 };
 

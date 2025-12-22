@@ -15,12 +15,7 @@ export class Users {
   }
 
   getUsers(): Observable<any> {
-    const token = localStorage.getItem('access_token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    return this.http.get(`${this.apiUrl}/users`, { headers });
+    return this.http.get(`${this.apiUrl}/users`);
   }
   
 }

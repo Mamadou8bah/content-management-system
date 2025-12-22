@@ -13,6 +13,12 @@
         Create User
         </button>
   </div>
+
+  <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+    <strong class="font-bold">Error!</strong>
+    <span class="block sm:inline"> {{ errorMessage }}</span>
+  </div>
+
   <div class="flex flex-col sm:flex-row items-center gap-4 mb-6 w-full">
     <div class="relative w-full sm:w-80">
       <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
@@ -57,11 +63,13 @@
         <tbody>
             <tr *ngFor="let user of users">
             <td class="py-3 px-4">
-                <img class="h-10 w-10 rounded-full object-cover" [src]="'https://i.pinimg.com/736x/0d/64/98/0d64989794b1a4c9d89bff571d3d5842.jpg'" alt="Profile Picture" />
+                <img  class="h-10 w-10 rounded-full object-cover" [src]="'https://i.pinimg.com/736x/0d/64/98/0d64989794b1a4c9d89bff571d3d5842.jpg'" alt="Profile Picture" *ngIf="!user.profilePhotoUrl"/>
+                <img class="h-10 w-10 rounded-full object-cover" [src]="user.profilePhotoUrl" alt="Profile Picture" *ngIf="user.profilePhotoUrl"/>
+           
             </td>
-            <td class="py-3 px-4">{{ user.fullname }}</td>
+            <td class="py-3 px-4">{{ user.fullname}}</td>
             <td class="py-3 px-4">{{ user.email }}</td>
-            <td class="py-3 px-4">{{ user.rollname }}</td>
+            <td class="py-3 px-4">{{ user.roleId.name }}</td>
             <td class="px-6 py-4 text-right relative">
             <button (click)="openUserMenu(user)" aria-label="Open user menu"
                     class="p-2 hover:bg-gray-200 rounded-full transition-all text-gray-400 hover:text-gray-600 focus:outline-none">
@@ -82,7 +90,7 @@
 
             <div *ngFor="let role of roles">
                 <button 
-                    *ngIf="user.rollname !== role.name"
+                    *ngIf="user.roleId.name !== role.name"
                     (click)="updateRole(user, role.name); openUserMenu(user)" 
                     class="flex w-full items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
                     

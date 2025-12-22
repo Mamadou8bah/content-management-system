@@ -28,4 +28,13 @@ export class Login {
     };
     return this.http.get(`${this.apiUrl}/auth/me`, { headers });
   }
+  logoutUser(): Observable<any> {
+    const refreshToken = localStorage.getItem('cms_refresh_token');
+    return this.http.post(`${this.apiUrl}/auth/logout`, { refreshToken });
+  }
+
+  refreshToken(): Observable<any> {
+    const refreshToken = localStorage.getItem('cms_refresh_token');
+    return this.http.post(`${this.apiUrl}/auth/refresh`, { refreshToken });
+  }
 }

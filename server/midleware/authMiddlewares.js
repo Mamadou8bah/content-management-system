@@ -4,24 +4,31 @@ const User=require('../model/User');
 const Role=require('../model/Role')
 dotenv.config();
 
-const authenticateToken=(req,res,next)=>{
-    const authHeader=req.headers['authorization'];
-    const token=authHeader && authHeader.split(' ')[1];
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
-    if(!token){
-        return  res.status(401).json({message:'Access token missing'});
+    if (!token) {
+        return res.status(401).json({ message: 'Access token missing' });
     }
-    const payload=jwt.verify(token,process.env.JWT_SECRET)
-    const userId=payload.sub
-    User.findById(userId).then(user=>{
-        if(!user){
-            return res.status(401).json({message:'User not found'});
-        }
-        req.user=user;
-        next();
-    }).catch(err=>{
-        return res.status(403).json({message:'Invalid token'});
-    });
+
+    try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = payload.sub;
+        User.findById(userId).then(user => {
+            if (!user) {
+                return res.status(401).json({ message: 'User not found' });
+            }
+            req.user = user;
+            next();
+        }).catch(err => {
+            // This catch is for database errors, which are internal server errors.
+            return res.status(500).json({ message: 'Error looking up user', error: err.message });
+        });
+    } catch (err) {
+        // This catch is for jwt.verify errors (e.g., expired, malformed)
+        return res.status(401).json({ message: 'Invalid or expired token' });
+    }
 };
 
 const loadPermissions=async(req,res,next)=>{

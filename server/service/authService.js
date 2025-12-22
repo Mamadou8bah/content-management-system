@@ -1,4 +1,5 @@
 const User = require('../model/User');
+const Role = require('../model/Role');
 const cloudinaryUploader = require('../utils/cloudinaryUploader');
 const bcrypt = require('bcrypt');
 const jwtService=require('../utils/jwtService')
@@ -31,11 +32,13 @@ const register = async (userData, image) => {
 
   const [passwordHash, uploadResult] = await Promise.all([passwordHashPromise, uploadPromise]);
 
+  const roleId = await Role.findOne({ name: 'Viewer' }).then(role => role ? role._id : null);
+
   const newUser = new User({
     fullname: userData.fullname || userData.fullName,
     email: userData.email.toLowerCase(),
     password: passwordHash,
-    roleId: userData.roleId,
+    roleId: roleId,
     profilePhotoUrl: uploadResult ? uploadResult.secure_url : null
   });
 
@@ -68,7 +71,9 @@ const login= async(email,password)=>{
   return {
     accessToken:jwtService.generateAccessToken(user),
     refreshToken:refreshToken,
-    role:user.roleId.name
+    role:user.roleId ? user.roleId.name : null,
+    fullname:user.fullname,
+    profilePhotoUrl:user.profilePhotoUrl
   };
 };
 

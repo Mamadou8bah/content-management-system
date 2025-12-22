@@ -10,7 +10,9 @@ const ROLE_PERMISSION_MAP = {
     'publish_article',
     'view_article',
     'manage_roles',
-    'manage_permissions'
+    'manage_permissions',
+    'view_users',
+    'change_user_role'
   ],
 
   Manager: [

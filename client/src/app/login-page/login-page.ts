@@ -55,6 +55,8 @@ export class LoginPage {
         localStorage.setItem('cms_access_token', response.accessToken);
         localStorage.setItem('cms_refresh_token', response.refreshToken);
         localStorage.setItem('cms_role', response.role);
+        localStorage.setItem('cms_fullname', response.fullname);
+        localStorage.setItem('cms_profilePhotoUrl', response.profilePhotoUrl);
         this.router.navigate(['/']);
       },
       error: (err) => {

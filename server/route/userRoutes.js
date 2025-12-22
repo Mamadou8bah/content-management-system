@@ -9,8 +9,8 @@ const {
     changeUserRoleHandler
 }=require('../controller/userController');
 
-Router.get('/',authenticateToken,authz('view_users'),getUsersHandler);
-Router.get('/:id',authenticateToken,authz('view_users'),getUserByIdHandler);
-Router.put('/:id/role',authenticateToken,authz('change_user_role'),changeUserRoleHandler);
+Router.get('/', authz('view_users'), getUsersHandler);
+Router.get('/:id', authz('view_users'), getUserByIdHandler);
+Router.put('/:id/role', authz('change_user_role'), changeUserRoleHandler);
 
 module.exports=Router;

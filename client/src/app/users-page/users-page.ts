@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { USERS } from '../services/users.data';
 import {ROLES} from '../services/roles.data';
+import { Users } from '../services/users';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-users-page',
@@ -13,12 +15,21 @@ import {ROLES} from '../services/roles.data';
 export class UsersPage implements OnInit {
   users: any[] = [];
   roles = ROLES;
+  errorMessage: string = '';
 
-  constructor() {}
+  constructor(private usersService: Users) {}
 
   ngOnInit() {
     
-    this.users = USERS.map(user => ({ ...user, isMenuOpen: false }));
+    this.getUsers().subscribe({
+      next: (users) => {
+        this.users = users.map(user => ({ ...user, isMenuOpen: false }));
+      },
+      error: (err) => {
+        console.error('Error fetching users:', err);
+        this.errorMessage = 'Failed to load users. ' + (err.error?.message || err.message);
+      }
+    });
   }
 
   openUserMenu(clickedUser: any) {
@@ -36,6 +47,9 @@ export class UsersPage implements OnInit {
     console.log(`${user.fullname} is now a ${newRole}`);
   }
 
+  getUsers(): Observable<any[]> {
+    return this.usersService.getUsers();
+  }
 
   deleteUser(user: any) {
     this.users = this.users.filter((u) => u.id !== user.id);

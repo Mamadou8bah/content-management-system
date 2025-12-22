@@ -1,4 +1,5 @@
 const {register,login,logout,getAccessToken,revokeToken}=require('../service/authService')
+const {getUserById}=require('../service/userService')
 
 async function registerUser(req,res){
     try{
@@ -55,10 +56,17 @@ async function logoutUser(req,res){
 
 async function getAccessTokenForUser(req,res){
     try{
+        console.log('Refresh token request received');
         const {refreshToken}=req.body;
+        if (!refreshToken) {
+            console.log('No refresh token provided');
+            return res.status(400).json({ error: 'Refresh token is required' });
+        }
         const result= await getAccessToken(refreshToken);
+        console.log('New access token generated');
         res.status(200).json(result);
     }catch(err){
+        console.error('Error refreshing token:', err.message);
         res.status(500).json({ error: err.message });
     }
 }

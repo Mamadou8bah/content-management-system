@@ -51,7 +51,6 @@ const login= async(email,password)=>{
   if(!user) throw new Error('Invalid email or password');
   const passwordMatch= await bcrypt.compare(password,user.password);
   if(!passwordMatch) throw new Error('Invalid email or password');
-
   const tokenId=uuidv4();
   const refreshToken=jwtService.generateRefreshToken(user,tokenId);
   const tokenHash=await bcrypt.hash(refreshToken,10);

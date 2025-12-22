@@ -8,4 +8,16 @@ import { RouterModule } from '@angular/router';
   styleUrl: './navbar.css',
 })
 export class Navbar {
+  userRole: string | null = localStorage.getItem('userRole');
+
+  isSuperAdmin(): boolean {
+    return this.userRole === 'SuperAdmin';
+  }
+
+  isManager(): boolean {
+    return this.userRole === 'Manager';
+  }
+  isContributor(): boolean {
+    return this.userRole === 'Contributor';
+  }
 }

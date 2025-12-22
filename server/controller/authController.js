@@ -23,6 +23,9 @@ async function loginUser(req,res){
             ...tokens
         });
     }catch(err){
+        if (err.message === 'Invalid email or password') {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
         res.status(500).json({ error: err.message });
     }
 }

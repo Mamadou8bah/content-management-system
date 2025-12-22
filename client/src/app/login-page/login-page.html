@@ -46,6 +46,9 @@
             <input type="password" placeholder="Password" class="w-full px-5 py-3.5 bg-slate-50 rounded-2xl focus:outline-none focus:border-2 focus:border-yellow-200" formControlName="password">
             <p *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="text-red-500 text-xs mt-1 ml-4">Password is required</p>
           </div>
+          <div *ngIf="errorMessage" class="text-red-500 text-sm text-center">
+            {{ errorMessage }}
+          </div>
 
           <button type="submit" [disabled]="form.invalid" class="w-52 bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 text-white font-bold py-3.5 rounded-full mt-6 uppercase text-sm tracking-wider">
             {{ isLoginMode ? 'Sign In' : 'Sign Up' }}

@@ -16,6 +16,7 @@ export class LoginPage {
   profileImage: string | ArrayBuffer | null = null;
   form: FormGroup;
 
+  errorMessage: string = '';
   constructor(
     private fb: FormBuilder,
     private loginService: Login,
@@ -56,7 +57,10 @@ export class LoginPage {
         localStorage.setItem('cms_role', response.role);
         this.router.navigate(['/']);
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = err.error?.error || 'An error occurred during login.';
+      }
     });
   }
 
@@ -73,8 +77,12 @@ export class LoginPage {
 
     this.loginService.registerUser(formData).subscribe({
       next: () => (this.isLoginMode = true),
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = err.error?.error || 'An error occurred during registration.';
+      }
     });
+    alert('Registration successful! Please log in.');
   }
 
   private dataURLtoBlob(dataURL: string): Blob {

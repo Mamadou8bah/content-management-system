@@ -18,5 +18,8 @@ export class Users {
     return this.http.get(`${this.apiUrl}/users`);
   }
   
+  updateUser(id: string, updates: any):Observable<any>{
+    return this.http.put(`${this.apiUrl}/users/${id}`, updates);
+  }
 }
  

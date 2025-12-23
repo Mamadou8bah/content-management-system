@@ -24,17 +24,17 @@
       <input
         type="text"
         placeholder="Search by title or author..."
+        (input)="onSearch($event)"
         class="block w-full rounded-xl border border-gray-200 py-2.5 pl-10 pr-4 text-sm  outline-none transition-all"
       />
     </div>
 
     <div class="flex items-center gap-2 w-full sm:w-auto">
       <div class="relative w-full sm:w-48">
-        <select id="filter" class="appearance-none block w-full border border-gray-200 text-gray-700 py-2.5 px-4 pr-10 rounded-xl text-sm  outline-none cursor-pointer transition-all">
-          <option disabled selected>Filter by...</option>
-          <option>Date Created</option>
-          <option>Author</option>
-          <option>Category</option>
+        <select id="filter" (change)="onFilterChange($event)" class="appearance-none block w-full border border-gray-200 text-gray-700 py-2.5 px-4 pr-10 rounded-xl text-sm  outline-none cursor-pointer transition-all">
+          <option value="">Filter by...</option>
+          <option value="date">Date Created</option>
+          <option value="author">Author</option>
         </select>
         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 border-l border-gray-200 my-2 ml-2">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,7 +59,8 @@
       <tbody class="divide-y divide-gray-100">
         <tr *ngFor="let article of articles" class="hover:bg-gray-50/50 transition-colors group">
           <td class="px-6 py-4 whitespace-nowrap">
-            <img [src]="article.imageUrl" alt="" class="h-[6rem] w-[12rem] object-cover rounded-lg ring-1 ring-gray-200 shadow-sm"/>
+            <img *ngIf="article.imageUrl"  [src]="article.imageUrl" alt="" class="h-[6rem] w-[12rem] object-cover rounded-lg ring-1 ring-gray-200 shadow-sm" />
+            <img *ngIf="!article.imageUrl" src="logo.png" alt="" class="h-[6rem] w-[12rem] object-cover rounded-lg ring-1 ring-gray-200 shadow-sm"/>
           </td>
           
           <td class="px-6 py-4 cursor-pointer" [routerLink]="['/articles', article.id]">
@@ -67,7 +68,7 @@
           </td>
 
           <td class="px-6 py-4 text-gray-600  font-bold">
-            {{ article.publishedBy }}
+            {{ article.author.fullname }}
           </td>
 
           <td class="px-6 py-4 whitespace-nowrap">
@@ -94,10 +95,15 @@
                 Share Article
               </button>
 
-              <button (click)="unpublishArticle(article); openPostMenu(article)" 
+              <button *ngIf="article.status === 'Published'" (click)="unpublishArticle(article); openPostMenu(article)" 
                 class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                 Unpublish
+              </button>
+              <button *ngIf="article.status !== 'Published'" (click)="publishArticle(article); openPostMenu(article)" 
+                class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                Publish
               </button>
 
               <div class="h-px bg-gray-100 my-1 mx-2"></div>

@@ -30,8 +30,6 @@ export class Login {
   }
   logoutUser(): Observable<any> {
     const refreshToken = localStorage.getItem('cms_refresh_token');
-    localStorage.removeItem('cms_access_token');
-    localStorage.removeItem('cms_refresh_token');
     return this.http.post(`${this.apiUrl}/auth/logout`, { refreshToken });
   }
 

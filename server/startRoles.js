@@ -19,7 +19,8 @@ const ROLE_PERMISSION_MAP = {
     'create_article',
     'edit_article',
     'publish_article',
-    'view_article'
+    'view_article',
+    'view_users'
   ],
 
   Contributor: [

@@ -14,8 +14,12 @@ import { Observable } from 'rxjs';
 })
 export class UsersPage implements OnInit {
   users: any[] = [];
+  sourceUsers: any[] = [];
   roles = ROLES;
+  userRole=localStorage.getItem('cms_role');
   errorMessage: string = '';
+  searchTerm: string = '';
+  roleFilter: string = '';
 
   constructor(private usersService: Users) {}
 
@@ -23,12 +27,45 @@ export class UsersPage implements OnInit {
     
     this.getUsers().subscribe({
       next: (users) => {
-        this.users = users.map(user => ({ ...user, isMenuOpen: false }));
+        this.sourceUsers = users.map(user => ({ ...user, isMenuOpen: false }));
+        this.applyFilters();
       },
       error: (err) => {
         console.error('Error fetching users:', err);
         this.errorMessage = 'Failed to load users. ' + (err.error?.message || err.message);
       }
+    });
+  }
+
+  onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement)?.value ?? '';
+    this.searchTerm = value;
+    this.applyFilters();
+  }
+
+  onRoleFilter(event: Event) {
+    const value = (event.target as HTMLSelectElement)?.value ?? '';
+    this.roleFilter = value;
+    this.applyFilters();
+  }
+
+  private normalizeRole(value: string): string {
+    return (value ?? '').replace(/\s+/g, '').toLowerCase();
+  }
+
+  private applyFilters() {
+    const term = (this.searchTerm ?? '').trim().toLowerCase();
+    const role = this.normalizeRole(this.roleFilter);
+
+    this.users = this.sourceUsers.filter((user) => {
+      const name = (user.fullname ?? '').toLowerCase();
+      const email = (user.email ?? '').toLowerCase();
+      const matchesText = !term || name.includes(term) || email.includes(term);
+
+      const userRoleName = this.normalizeRole(user.roleId?.name ?? '');
+      const matchesRole = !role || userRoleName === role;
+
+      return matchesText && matchesRole;
     });
   }
 
@@ -42,23 +79,44 @@ export class UsersPage implements OnInit {
   }
     
    updateRole(user: any, newRole: string) {
-    user.rollname = newRole;
+   
+    const apiRoleName = newRole.replace(/\s+/g, '');
+
+    if (user.roleId) {
+      user.roleId = { ...user.roleId, name: newRole };
+    }
     user.isMenuOpen = false;
     console.log(`${user.fullname} is now a ${newRole}`);
-  }
+
+    this.usersService.updateUser(user._id, { role: apiRoleName }).subscribe({
+      next: (response) => {
+        const updated = response?.user ?? response;
+        if (updated?.roleId) {
+          user.roleId = updated.roleId;
+        }
+        this.applyFilters();
+        console.log('User role updated on server:', response);
+      },
+      error: (err) => {
+        console.error('Error updating user role:', err);
+        this.errorMessage = 'Failed to update user role. ' + (err.error?.error || err.message);
+      }
+    });
+  } 
 
   getUsers(): Observable<any[]> {
     return this.usersService.getUsers();
   }
 
   deleteUser(user: any) {
-    this.users = this.users.filter((u) => u.id !== user.id);
+    this.sourceUsers = this.sourceUsers.filter((u) => u._id !== user._id);
+    this.applyFilters();
   }
 
   shareUser(user: any) {
     const shareData = {
       title: user.fullname,
-      text: `Check out the profile of ${user.fullname}, a ${user.rollname}.`,
+      text: `Check out the profile of ${user.fullname}, a ${user.roleId?.name ?? 'User'}.`,
       url: window.location.href,
     };
     if (navigator.share) {

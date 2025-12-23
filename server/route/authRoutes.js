@@ -15,7 +15,7 @@ const {
 
 Router.post('/register',upload.single('avatar'),registerUser)
 Router.post('/login',loginUser)
-Router.post('/logout',authenticateToken,logoutUser)
+Router.post('/logout',logoutUser)
 Router.post('/refresh',getAccessTokenForUser)
 Router.post('/revoke-token',authenticateToken,revokeTokenForUser)
 Router.get('/me',authenticateToken,getLoggedInUser)

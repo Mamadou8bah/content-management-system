@@ -12,19 +12,19 @@ const createArticle=async(data,image)=>{
         content:data.content,
         imageUrl:data.imageUrl || null,
         author:data.author,
-        publishedBy:data.publishedBy.fullname || null
+        publishedBy:data.publishedBy || null
     });
 
     await article.save();
     return article;
 };
 const publishArticle=async(id)=>{
-    const article=await Article.findBy(id);
+    const article=await Article.findById(id);
     if(!article || article.isDeleted) throw new Error('Article not found');
     article.status='published';
     article.publishedAt=new Date();
     await article.save();
-    return article.populate('author').populate('publishedBy');
+    return article.populate('author');
 }
 const getArticleById=async(id)=>{
     const article=await Article.findById(id).populate('author').populate('publishedBy');
@@ -45,7 +45,15 @@ const updateArticle=async(id,updates)=>{
 
     if(updates.title !== undefined) article.title=updates.title;
     if(updates.content !== undefined) article.content=updates.content;
-    if(updates.status !== undefined) article.status=updates.status;
+    if(updates.status !== undefined) {
+        article.status=updates.status;
+
+        
+        if(updates.status !== 'published'){
+            article.publishedAt=null;
+            article.publishedBy=null;
+        }
+    }
 
     if(updates.status === 'published' && !article.publishedAt){
         article.publishedAt=new Date();

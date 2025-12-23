@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Roles } from '../services/roles';
 
 @Component({
   selector: 'app-roles-page',
@@ -10,128 +11,82 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './roles-page.css',
 })
 export class RolesPage {
-  // UI State
+  
   showModal = false;
   newRoleName = '';
 
-  // 1. All available permissions from your DB
-  allPermissions = [
-    { _id: { "$oid": "69401e440cebd6a674934fd8" }, key: "create_article" },
-    { _id: { "$oid": "69401e440cebd6a674934fdd" }, key: "edit_article" },
-    { _id: { "$oid": "69401e440cebd6a674934fe0" }, key: "delete_article" },
-    { _id: { "$oid": "69401e440cebd6a674934fe3" }, key: "publish_article" },
-    { _id: { "$oid": "69401e440cebd6a674934fe6" }, key: "view_article" },
-    { _id: { "$oid": "69401e440cebd6a674934fe9" }, key: "manage_roles" },
-    { _id: { "$oid": "69401e440cebd6a674934fec" }, key: "manage_permissions" }
-  ];
+  constructor(private rolesService: Roles){
 
-  // 2. Mapping logic for the Table UI (Columns: Read, Write, Delete)
+  }
+
+
+  allPermissions: any[] = [];
+  
   modules = [
     { name: 'Articles', read: 'view_article', write: 'create_article', delete: 'delete_article' },
     { name: 'Roles', read: 'manage_roles', write: 'manage_roles', delete: 'manage_roles' },
     { name: 'Permissions', read: 'manage_permissions', write: 'manage_permissions', delete: 'manage_permissions' }
   ];
+roles: any[] = [];
+selectedRole: any = null;
+newRolePermissions: any[] = [];
 
-  // 3. Roles list from your DB
-  roles = [
-    {
-      _id: { "$oid": "69401e440cebd6a674934ff0" },
-      name: "SuperAdmin",
-      permissions: [
-        { "$oid": "69401e440cebd6a674934fd8" },
-        { "$oid": "69401e440cebd6a674934fe0" },
-        { "$oid": "69401e440cebd6a674934fdd" },
-        { "$oid": "69401e440cebd6a674934fec" },
-        { "$oid": "69401e440cebd6a674934fe9" },
-        { "$oid": "69401e440cebd6a674934fe3" },
-        { "$oid": "69401e440cebd6a674934fe6" }
-      ]
-    },
-    {
-      _id: { "$oid": "69401e440cebd6a674934ff4" },
-      name: "Manager",
-      permissions: [
-        { "$oid": "69401e440cebd6a674934fd8" },
-        { "$oid": "69401e440cebd6a674934fdd" },
-        { "$oid": "69401e440cebd6a674934fe3" },
-        { "$oid": "69401e440cebd6a674934fe6" }
-      ]
-    }
-    ,
-{
-  "_id": {
-    "$oid": "69401e440cebd6a674934ff8"
-  },
-  "name": "Contributor",
-  "permissions": [
-    {
-      "$oid": "69401e440cebd6a674934fd8"
-    },
-    {
-      "$oid": "69401e440cebd6a674934fdd"
-    },
-    {
-      "$oid": "69401e440cebd6a674934fe6"
-    }
-  ],
-  "isSystemRole": true,
-  "createdAt": {
-    "$date": "2025-12-15T14:42:12.644Z"
-  },
-  "updatedAt": {
-    "$date": "2025-12-15T14:42:12.644Z"
-  },
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "69401e440cebd6a674934ffc"
-  },
-  "name": "Viewer",
-  "permissions": [
-    {
-      "$oid": "69401e440cebd6a674934fe6"
-    }
-  ],
-  "isSystemRole": true,
-  "createdAt": {
-    "$date": "2025-12-15T14:42:12.650Z"
-  },
-  "updatedAt": {
-    "$date": "2025-12-15T14:42:12.650Z"
-  },
-  "__v": 0
+private getId(value: any): string | null {
+  if (!value) return null;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object') {
+    if (typeof value.$oid === 'string') return value.$oid;
+    if (typeof value._id === 'string') return value._id;
+    if (value._id && typeof value._id === 'object' && typeof value._id.$oid === 'string') return value._id.$oid;
+    if (typeof value.id === 'string') return value.id;
+  }
+  return null;
 }
-  ];
 
-  selectedRole = this.roles[0];
-  newRolePermissions: any[] = []; // Temporary array for modal state
+isRoleSelected(role: any): boolean {
+  const selectedId = this.getId(this.selectedRole?._id);
+  const roleId = this.getId(role?._id);
+  return !!selectedId && !!roleId && selectedId === roleId;
+}
 
-  // --- METHODS ---
+ngOnInit() {
+  this.rolesService.getRoles().subscribe((roles: any[]) => {
+    this.roles = roles || [];
+    this.selectedRole = this.roles.length ? this.roles[0] : null;
+  });
+  this.rolesService.getPermissions().subscribe((permissions: any[]) => {
+    this.allPermissions = permissions || [];
+  });
+}
 
-  selectRole(role: any) {
-    this.selectedRole = role;
-  }
+selectRole(role: any) {
+  this.selectedRole = role;
+}
 
-  // Check if a specific role contains a permission key
+
+ 
   checkPermission(role: any, key: string): boolean {
-    const perm = this.allPermissions.find(p => p.key === key);
-    if (!perm || !role.permissions) return false;
-    return role.permissions.some((p: any) => p.$oid === perm._id.$oid);
+    if (!role) return false;
+    const perm = this.allPermissions.find((p: any) => p?.key === key);
+    const permId = this.getId(perm?._id);
+    if (!permId || !Array.isArray(role.permissions)) return false;
+    return role.permissions.some((p: any) => this.getId(p) === permId);
   }
 
-  // Toggle permission OID in a role's permission array
+  
   togglePermission(role: any, key: string) {
-    const perm = this.allPermissions.find(p => p.key === key);
-    if (!perm) return;
+    if (!role) return;
+    const perm = this.allPermissions.find((p: any) => p?.key === key);
+    const permId = this.getId(perm?._id);
+    if (!permId) return;
 
-    if (!role.permissions) role.permissions = [];
+    if (!Array.isArray(role.permissions)) role.permissions = [];
 
-    const index = role.permissions.findIndex((p: any) => p.$oid === perm._id.$oid);
+    const index = role.permissions.findIndex((p: any) => this.getId(p) === permId);
     if (index > -1) {
       role.permissions.splice(index, 1);
     } else {
-      role.permissions.push({ "$oid": perm._id.$oid });
+      role.permissions.push(permId);
     }
   }
 
@@ -148,38 +103,70 @@ export class RolesPage {
       return;
     }
 
-    const newEntry = {
-      _id: { "$oid": Math.random().toString(36).substring(2, 15) }, // Temporary ID
+    const newRole = {
       name: this.newRoleName,
-      permissions: [...this.newRolePermissions] // Uses OIDs collected via toggle
+      permissions: this.newRolePermissions,
+      isSystemRole: false
     };
 
-    this.roles.push(newEntry);
-    this.selectedRole = newEntry;
-    this.showModal = false;
+    this.rolesService.createRole(newRole).subscribe({
+      next: (res: any) => {
+        this.roles.push(res.role);
+        this.selectedRole = res.role;
+        this.showModal = false;
+        alert('Role created successfully');
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Failed to create role: ' + (err.error?.error || err.message));
+      }
+    });
   }
 
-  deleteRole(id: string) {
+  deleteRole(roleOrId: any) {
     if(confirm('Are you sure you want to delete this role?')) {
-      this.roles = this.roles.filter(r => r._id.$oid !== id);
-      if (this.selectedRole._id.$oid === id && this.roles.length > 0) {
-        this.selectedRole = this.roles[0];
-      }
+      const id = this.getId(roleOrId?._id ?? roleOrId);
+      if (!id) return;
+
+      this.rolesService.deleteRole(id).subscribe({
+        next: () => {
+          this.roles = this.roles.filter(r => this.getId(r?._id) !== id);
+          if (this.selectedRole && this.getId(this.selectedRole?._id) === id) {
+            this.selectedRole = this.roles.length > 0 ? this.roles[0] : null;
+          }
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Failed to delete role: ' + (err.error?.error || err.message));
+        }
+      });
     }
   }
 
-  // Final Save Action
+ 
   saveChanges() {
-    const payload = {
-      id: this.selectedRole._id.$oid,
-      permissions: this.selectedRole.permissions
-    };
+    if (!this.selectedRole) return;
 
-    console.log('Saving to DB:', payload);
-    
-    // Here you would call your API service:
-    // this.apiService.updateRole(payload).subscribe(...)
-    
-    alert(`Changes saved for ${this.selectedRole.name}!`);
+    const roleId = this.getId(this.selectedRole?._id);
+    if (!roleId) return;
+
+    const permissionIds = this.selectedRole.permissions
+      .map((p: any) => this.getId(p))
+      .filter((id: string | null) => id !== null);
+
+    this.rolesService.updatePermissions(roleId, permissionIds).subscribe({
+      next: (res: any) => {
+        const index = this.roles.findIndex(r => this.getId(r._id) === roleId);
+        if (index !== -1) {
+          this.roles[index] = res.role;
+          this.selectedRole = res.role;
+        }
+        alert(`Changes saved for ${this.selectedRole.name}!`);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Failed to save changes: ' + (err.error?.error || err.message));
+      }
+    });
   }
 }

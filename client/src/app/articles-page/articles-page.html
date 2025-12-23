@@ -1,10 +1,10 @@
 <section class="flex justify-center items-center flex-col ">
-    <button (click)="togglePosting()" *ngIf="!isPosting"
+    <button (click)="togglePosting()" *ngIf="!isPosting && !isViewer()"
   class="fixed bottom-8 right-8 sm:right-36 z-50 
          flex items-center justify-center p-4 
-         bg-white text-gray-700 border-2 border-gray-200 rounded-full 
+         bg-yellow-500 text-gray-700 border-2 border-gray-200 rounded-full 
          shadow-lg hover:shadow-xl hover:scale-110 
-         transition-all duration-200 ease-in-out active:scale-95">
+         transition-all duration-200 ease-in-out active:scale-95" >
         <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -18,21 +18,22 @@
                 <div class="w-[1rem] h-[1rem] rounded-full">
                     <img class="w-full h-full object-cover" src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg" alt="">
                 </div>
-                <p class="font-light">In ContentFlow By <span class="font-bold">{{article.publishedBy}}</span></p>
+                <p class="font-light">In ContentFlow By <span class="font-bold">{{article.author.fullname}}</span></p>
             </div>
             <div class="flex flex-row justify-between flex-wrap  items-center ">
-                <div class="w-[36rem] cursor-pointer" [routerLink]="['/articles', article.id]">
+                <div class="w-[36rem] cursor-pointer" [routerLink]="['/articles', article._id]">
                     <p class="font-bold text-[1.5rem]">{{article.title}}</p>
-                    <p class="text-gray-500">{{article.body.slice(0,180)}}...</p>
+                    <p class="text-gray-500">{{article.content.slice(0,180)}}...</p>
                 </div>
                 <div class="w-[15rem] h-[10rem] my-2">
-                    <img class="rounded-2xl h-full w-full" src="{{article.imageUrl}}" alt="">
+                    <img *ngIf="article.imageUrl" class="rounded-2xl h-full w-full" src="{{article.imageUrl}}" alt="">
+                    <img *ngIf="!article.imageUrl" class="rounded-2xl h-full w-full" src="logo.png" alt="">
                 </div>
             </div>
 
             <div class="flex flex-row justify-between items-center mt-4">
                 <div class="flex flex-row gap-3">
-                    <p>{{article.date}}</p>
+                    <p>{{article.createdAt | date:'short'}}</p>
                 </div>
                 <div class=" flex flex-row justify-center items-center gap-3">
                     
@@ -44,7 +45,7 @@
 
             </div>
            <div *ngIf="article.isMenuOpen" 
-     class="absolute right-[5rem] bottom-[-5.5rem] z-40 w-48 
+     class="absolute right-[3rem] bottom-[-3.5rem] z-40 w-48 
             bg-white border border-gray-100 rounded-xl shadow-xl 
             flex flex-col py-2 overflow-hidden transition-all duration-200 ease-in-out">
     
@@ -58,8 +59,8 @@
                 <span class="font-medium">Share</span>
             </button>
 
-            <button (click)="openPostMenu(article, $event)" 
-                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left">
+                <button (click)="deleteArticle(article, $event)" 
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left" *ngIf="!isViewer() && !isContributor()">
                 <span class="w-5 h-5 flex items-center justify-center">
                     <svg viewBox="0 0 24 24" class="w-full h-full fill-red-600">
                         <path d="M20,5 C20.5523,5 21,5.44772 21,6 L21,7 C21,7.55228 20.5523,8 20,8 L19,8 L19,18 C19,19.6569 17.6569,21 16,21 L8,21 C6.34315,21 5,19.6569 5,18 L5,8 L4,8 C3.44772,8 3,7.55228 3,7 L3,6 C3,5.44772 3.44772,5 4,5 L20,5 Z M17,8 L7,8 L7,18 C7,18.5523 7.44772,19 8,19 L16,19 C16.5523,19 17,18.5523 17,18 L17,8 Z M15,11 C15.5523,11 16,11.4477 16,12 L16,16 C16,16.5523 15.5523,17 15,17 C14.4477,17 14,16.5523 14,16 L14,12 C14,11.4477 14.4477,11 15,11 Z M11,11 C11.5523,11 12,11.4477 12,12 L12,16 C12,16.5523 11.5523,17 11,17 C10.4477,17 10,16.5523 10,16 L10,12 C10,11.4477 10.4477,11 11,11 Z" fill="currentColor"></path>
@@ -68,14 +69,14 @@
                 <span class="font-medium">Delete</span>
             </button>
 
-            <button (click)="unpublishArticle(article); openPostMenu(article, $event)" 
-                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left border-t border-gray-50">
+                <button (click)="unpublishArticle(article, $event)" 
+                    class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left border-t border-gray-50" *ngIf="!isViewer() && !isContributor()">
                 <span class="w-5 h-5 flex items-center justify-center">
                     <svg viewBox="0 0 24 24" fill="none" class="w-full h-full stroke-slate-600">
                         <path d="M4 7H15M4 7C4 5.89543 4.89543 5 6 5H12.5M4 7V18C4 19.1046 4.89543 20 6 20H12.5M15 7L14.5 5.5M15 7V11.5M12.5 5L14.5 5.5M12.5 5V4M14.5 5.5L15.5 4M12.5 20V15.5M12.5 20H18C19.1046 20 20 19.1046 20 18V10C20 8.89543 19.1046 8 18 8H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
                     </svg>
                 </span>
-                <span class="font-medium">Unpublish</span>
+                <span class="font-medium" >Unpublish</span>
             </button>
             </div>
         </div>

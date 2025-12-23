@@ -74,7 +74,7 @@ export class LoginPage {
 
     if (this.profileImage && typeof this.profileImage === 'string') {
       const blob = this.dataURLtoBlob(this.profileImage);
-      formData.append('profileImage', blob, 'profile.png');
+      formData.append('avatar', blob, 'profile.png'); 
     }
 
     this.loginService.registerUser(formData).subscribe({

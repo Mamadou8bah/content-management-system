@@ -30,6 +30,13 @@ export class App {
       });
   }
 
+  ngOnInit(){
+    const token = localStorage.getItem('cms_access_token');
+    if (!token) {
+      this.router.navigate(['/login']);
+    }
+
+  }
   toggleSidebar() {
     this.isSidebarOpen.set(!this.isSidebarOpen());
   }

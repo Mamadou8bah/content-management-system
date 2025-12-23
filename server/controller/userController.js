@@ -1,4 +1,5 @@
 const { getUsers, getUserById, changeUserRole } = require('../service/userService');
+const Role = require('../model/Role');
 
 const getUsersHandler=async(req,res)=>{
     try{
@@ -22,8 +23,8 @@ const getUserByIdHandler=async(req,res)=>{
 const changeUserRoleHandler=async(req,res)=>{
     try{
         const { id } = req.params;
-        const { roleId } = req.body;
-        const user=await changeUserRole(id,roleId);
+        const { role} = req.body;
+        const user=await changeUserRole(id,role);
         res.status(200).json({
             message:'User role updated successfully',
             user

@@ -4,14 +4,6 @@
         <h1 class="text-2xl font-bold text-gray-900 tracking-tight">System Users</h1>
         <p class="text-sm text-gray-500">Manage, edit, and monitor your system users.</p>
         </div>
-    
-        <button class="flex items-center gap-2 bg-black hover:bg-gray-800 text-white px-5 py-2.5 rounded-full transition-all active:scale-95 font-medium text-sm shadow-sm">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        Create User
-        </button>
   </div>
 
   <div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -29,15 +21,16 @@
       <input
         type="text"
         placeholder="Search for users..."
+        (input)="onSearch($event)"
         class="block w-full rounded-xl border border-gray-200 py-2.5 pl-10 pr-4 text-sm  outline-none transition-all"
       />
     </div>
 
     <div class="flex items-center gap-2 w-full sm:w-auto">
       <div class="relative w-full sm:w-48">
-        <select id="filter" class="appearance-none block w-full border border-gray-200 text-gray-700 py-2.5 px-4 pr-10 rounded-xl text-sm  outline-none cursor-pointer transition-all">
+        <select id="filter" (change)="onRoleFilter($event)" class="appearance-none block w-full border border-gray-200 text-gray-700 py-2.5 px-4 pr-10 rounded-xl text-sm  outline-none cursor-pointer transition-all">
             <option value="">Filter by Role</option>
-            <option *ngFor="let role of roles" [value]="role">{{ role.name }}</option>
+          <option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</option>
         </select>
         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 border-l border-gray-200 my-2 ml-2">
           <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,8 +71,8 @@
               </svg>
             </button>
 
-            <div *ngIf="user.isMenuOpen" 
-                 class="absolute right-16 top-0 mt-2 w-48 bg-white shadow-2xl border border-gray-100 rounded-xl z-50 overflow-hidden flex flex-col py-1.5 origin-top-right transition-all" (pointerDownOutside)="openUserMenu(user)">
+              <div *ngIf="user.isMenuOpen" 
+                class="absolute right-16 top-0 mt-2 w-48 bg-white shadow-2xl border border-gray-100 rounded-xl z-50 overflow-hidden flex flex-col py-1.5 origin-top-right transition-all">
               
               <button (click)="shareUser(user); openUserMenu(user)" 
                 class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
@@ -88,19 +81,22 @@
               </button>
 
 
-            <div *ngFor="let role of roles">
-                <button 
+            <ng-container *ngIf="userRole === 'SuperAdmin'">
+                <div *ngFor="let role of roles">
+                  <button
                     *ngIf="user.roleId.name !== role.name"
-                    (click)="updateRole(user, role.name); openUserMenu(user)" 
+                    (click)="updateRole(user, role.name); openUserMenu(user)"
                     class="flex w-full items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
-                    
+
                     <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                      <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                     </svg>
-                    
+
                     Make {{ role.name }}
-                </button>
-            </div>
+                  </button>
+                </div>
+              </ng-container>
+
              
                
 

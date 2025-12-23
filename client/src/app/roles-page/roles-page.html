@@ -20,12 +20,12 @@
         <nav class="divide-y divide-gray-100">
           <div *ngFor="let role of roles" 
                (click)="selectRole(role)"
-               [ngClass]="{'bg-gray-50': selectedRole._id.$oid === role._id.$oid}"
+               [ngClass]="{'bg-gray-50': isRoleSelected(role)}"
                class="group flex cursor-pointer items-center justify-between p-5 transition-all hover:bg-gray-50">
-            <span class="font-medium" [ngClass]="{'text-black text-2xl': selectedRole._id.$oid === role._id.$oid}">
+            <span class="font-medium" [ngClass]="{'text-black text-2xl': isRoleSelected(role)}">
               {{ role.name }}
             </span>
-            <button (click)="deleteRole(role._id.$oid); $event.stopPropagation()" 
+            <button (click)="deleteRole(role); $event.stopPropagation()" 
                     class="text-slate-400 hover:text-red-500 transition-opacity p-1">
               <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -38,7 +38,7 @@
       <main class="lg:col-span-2 overflow-hidden rounded-2xl border bg-white">
         <div class="flex items-center justify-between border-b border-gray-100 p-6">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900">{{ selectedRole.name }}</h2>
+            <h2 class="text-2xl font-bold text-gray-900">{{ selectedRole?.name || 'No role selected' }}</h2>
             <p class="text-xs text-slate-500 font-medium uppercase mt-1 tracking-tighter">Current Access Configuration</p>
           </div>
           <button (click)="saveChanges()" class="rounded-full bg-black p-3 text-white hover:bg-gray-800 transition-colors">

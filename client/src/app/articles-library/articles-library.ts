@@ -7,7 +7,10 @@ import {
   FormGroup,
 } from '@angular/forms';
 import { ARTICLES } from '../services/articles.data';
+
+import { ArticlesService } from '../services/articles.service';
 import { RouterLink } from "@angular/router";
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-articles-library',
@@ -21,9 +24,11 @@ export class ArticlesLibrary {
   sourceArticles: any[] = [];
   postForm: any;
   isPosting: boolean = false;
+  searchTerm: string = '';
+  filterOption: string = '';
 
 
-  constructor(private fb: FormBuilder, private elementRef: ElementRef) {
+  constructor(private fb: FormBuilder, private elementRef: ElementRef, private articleService:ArticlesService) {
     this.postForm = this.fb.group({
       title: [''],
       content: [''],
@@ -38,29 +43,54 @@ export class ArticlesLibrary {
     }
   }
 
-  filterArticles(criteria: string) {
-    if (criteria === 'Published' || criteria === 'Draft') {
-      this.articles = this.sourceArticles.filter(
-        (article) => article.status === criteria
-      );
-    } else if (criteria === 'Date') {
-      this.articles.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-    } else if (criteria === 'Author') {
-      this.articles.sort((a, b) => a.publishedBy.localeCompare(b.publishedBy));
-    } else {
-      this.articles = [...this.sourceArticles];
+  onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement)?.value ?? '';
+    this.searchTerm = value;
+    this.applyFilters();
+  }
+
+  onFilterChange(event: Event) {
+    const value = (event.target as HTMLSelectElement)?.value ?? '';
+    this.filterOption = value;
+    this.applyFilters();
+  }
+
+  private applyFilters() {
+    const term = (this.searchTerm ?? '').trim().toLowerCase();
+
+    let filtered = this.sourceArticles.filter((article) => {
+      if (!term) return true;
+      const title = (article.title ?? '').toLowerCase();
+      const author = (article.author?.fullname ?? '').toLowerCase();
+      return title.includes(term) || author.includes(term);
+    });
+
+    if (this.filterOption === 'date') {
+      filtered = [...filtered].sort((a, b) => {
+        const aDate = new Date(a.createdAt ?? a.updatedAt ?? 0).getTime();
+        const bDate = new Date(b.createdAt ?? b.updatedAt ?? 0).getTime();
+        return bDate - aDate;
+      });
+    } else if (this.filterOption === 'author') {
+      filtered = [...filtered].sort((a, b) => {
+        const aName = (a.author?.fullname ?? '').toLowerCase();
+        const bName = (b.author?.fullname ?? '').toLowerCase();
+        return aName.localeCompare(bName);
+      });
     }
-    console.log('Filtering articles by:', criteria);
+
+    this.articles = filtered;
   }
 
   ngOnInit() {
-    this.sourceArticles = ARTICLES.map((article) => ({
-      ...article,
-      isMenuOpen: false,
-    }));
-    this.articles = [...this.sourceArticles];
+    this.articleService.getArticles().subscribe((a: any[]) => {
+      this.sourceArticles = a.map((article) => ({
+        ...article,
+        isMenuOpen: false,
+      }));
+
+      this.applyFilters();
+    });
   }
 
   togglePosting() {
@@ -80,17 +110,44 @@ export class ArticlesLibrary {
     this.articles.forEach(article => article.isMenuOpen = false);
   }
 
+  getArticles(): Observable<any>{
+    return this.articleService.getArticles();
+  }
 
   onSubmit() {
     if (this.postForm.valid) {
-      const formData = new FormData();
-      formData.append('title', this.postForm.get('title').value);
-      formData.append('content', this.postForm.get('content').value);
-      if (this.fileToUpload) {
-        formData.append('image', this.fileToUpload, this.fileToUpload.name);
-      }
-      console.log('Form Data Submitted:', formData);
+    const formData = new FormData();
+    
+    // Safer way to access values
+    const { title, content } = this.postForm.value;
+    formData.append('title', title);
+    formData.append('content', content);
+    
+    if (this.fileToUpload) {
+      formData.append('image', this.fileToUpload, this.fileToUpload.name);
     }
+
+    this.articleService.postArticle(formData).subscribe({
+      next: (response) => {
+        console.log('Article posted successfully', response);
+
+        const created = response?.article ?? response;
+        const newArticle = { ...created, isMenuOpen: false };
+        
+        
+        this.sourceArticles.unshift(newArticle);
+        this.applyFilters();
+
+        this.isPosting = false; 
+        this.postForm.reset();
+        this.fileToUpload = null; 
+      },
+      error: (err) => {
+        console.error('Error posting article', err);
+        
+      }
+    });
+  }
   }
 
   deleteArticle(article: any) {
@@ -111,6 +168,15 @@ export class ArticlesLibrary {
   }
 
   unpublishArticle(article: any) {
-    article.status = 'Draft';
+    article.status = 'draft';
+    this.updateArticle(article, { status: 'draft' });
+  }
+  publishArticle(article: any) {
+    article.status = 'published';
+    this.updateArticle(article, { status: 'published' });
+  }
+  updateArticle(article: any, updates: any) {
+    Object.assign(article, updates);
+    return this.articleService.updateArticle(article._id, updates).subscribe();
   }
 }

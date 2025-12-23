@@ -11,11 +11,11 @@ const getUserById=async(id)=>{
     return user;
 };
 
-const changeUserRole=async(userId,roleId)=>{
+const changeUserRole=async(userId,roleName)=>{
     const user=await User.findById(userId);
     if(!user) throw new Error('User not found');
 
-    const role=await Role.findById(roleId);
+    const role=await Role.findOne({name:roleName});
     if(!role) throw new Error('Role not found');
 
     user.roleId=role._id;

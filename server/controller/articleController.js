@@ -10,15 +10,21 @@ const {
 
 const createArticleHandler=async(req,res)=>{
     try{
+        console.log('hitt the backend')
         const articleData=req.body;
-        const image=req.file.buffer;
-        const article=await createArticle(articleData,image);
+        if (!req.user?._id) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+    
+        articleData.author = req.user._id;
+        const image=req.file ? req.file.buffer : null;
+        const article=(await createArticle(articleData,image)).populate('author');
         res.status(201).json({
             message:'Article created successfully',
             article
         });
     }catch(err){
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ error: err?.message || 'Failed to create article' });
     }
 };
 const getArticleByIdHandler=async(req,res)=>{

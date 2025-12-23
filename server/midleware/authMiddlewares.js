@@ -22,11 +22,11 @@ const authenticateToken = (req, res, next) => {
             req.user = user;
             next();
         }).catch(err => {
-            // This catch is for database errors, which are internal server errors.
+            
             return res.status(500).json({ message: 'Error looking up user', error: err.message });
         });
     } catch (err) {
-        // This catch is for jwt.verify errors (e.g., expired, malformed)
+        
         return res.status(401).json({ message: 'Invalid or expired token' });
     }
 };

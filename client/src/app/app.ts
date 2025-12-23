@@ -12,7 +12,7 @@ import { filter } from 'rxjs';
   styleUrl: './app.css',
 }) 
 export class App {
-  isSidebarOpen = signal(true);
+  isSidebarOpen = signal(false);
   isLoginPage = signal(false);
   fullname = localStorage.getItem('cms_fullname') || 'User';
   profilePhotoUrl = localStorage.getItem('cms_profilePhotoUrl') || 'https://static.vecteezy.com/system/resources/thumbnails/074/189/886/small/an'

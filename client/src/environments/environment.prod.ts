@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'YOUR_PRODUCTION_API_URL'
+  apiUrl: 'https://content-management-system-mamadou.onrender.com'
 };

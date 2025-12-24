@@ -1,7 +1,7 @@
 <section class="min-h-screen bg-white px-4 py-12 sm:px-6 lg:px-8 rounded-[3rem]">
   <div class="mx-auto max-w-3xl">
     
-    <div *ngIf="article; else notFound" class="space-y-8">
+    <div *ngIf="!notFound && article; else notFound" class="space-y-8">
       
       <header class="space-y-4">
         <h1 class="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">

@@ -11,7 +11,8 @@ import { ArticlesService } from '../services/articles.service';
   styleUrl: './article-details.css',
 })
 export class ArticleDetails implements OnInit {
-  article: any;
+  article: any = null;
+  notFound = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -20,14 +21,26 @@ export class ArticleDetails implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) return;
-
-    this.articlesService.getArticles().subscribe({
-      next: (articles) => {
-        this.article = articles.find((a: any) => a.id == id);
+    if (!id) {
+      this.notFound = true;
+      return;
+    }
+    this.articlesService.getArticleById(id).subscribe({
+      next: (article) => {
+        if (!article || article.isDeleted) {
+          this.notFound = true;
+          return;
+        }
+        this.article = {
+          ...article,
+          title: article.title,
+          imageUrl: article.imageUrl,
+          publishedBy: article.publishedBy?.name || article.author?.name || 'Unknown',
+          body: article.content || article.body
+        };
       },
-      error: (err) => {
-        console.error('Failed to load articles', err);
+      error: () => {
+        this.notFound = true;
       }
     });
   }

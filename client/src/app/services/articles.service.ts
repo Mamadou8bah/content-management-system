@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
@@ -15,6 +16,10 @@ export class ArticlesService {
     console.log('Working')
     return this.http.get(`${this.apiUrl}/articles`);
     
+  }
+
+  getArticleById(id: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/articles/${id}`);
   }
   postArticle(formdata: FormData): Observable<any> {
     console.log('Post Working')

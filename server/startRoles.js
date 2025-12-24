@@ -18,6 +18,7 @@ const ROLE_PERMISSION_MAP = {
   Manager: [
     'create_article',
     'edit_article',
+    'delete_article',
     'publish_article',
     'view_article',
     'view_users'

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { Login } from '../services/login';
   styleUrl: './navbar.css',
 })
 export class Navbar {
+  @Input() visible: boolean = true;
   userRole: string | null = localStorage.getItem('cms_role');
 
   constructor(private router: Router, private loginService: Login) {

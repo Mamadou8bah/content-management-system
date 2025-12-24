@@ -6,7 +6,7 @@
     [class.w-0]="!isSidebarOpen()"
     [class.overflow-hidden]="!isSidebarOpen()"
   >
-    <div [class.hidden]="!isSidebarOpen()" class="w-64"> <app-navbar></app-navbar>
+    <div [class.hidden]="!isSidebarOpen()" class="w-64"> <app-navbar [visible]="isSidebarOpen()"></app-navbar>
     </div>
   </aside>
 

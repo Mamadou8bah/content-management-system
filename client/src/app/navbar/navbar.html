@@ -1,10 +1,10 @@
-<nav class="h-screen w-64 bg-yellow-500 border-r border-gray-200 px-4 py-6 flex flex-col sticky top-0">
+<nav *ngIf="visible" class="h-screen w-64 bg-yellow-500 border-r border-gray-200 px-4 py-6 flex flex-col sticky top-0">
     <div class="flex items-center justify-center">
         <img class="h-[11rem] w-auto object-contain" src="logo.png" alt="Logo">
     </div>
 
     <div class="flex-1 overflow-y-auto">
-        <p class="text-xs font-semibold tracking-wider text-gray-400 uppercase">Menu</p>
+        <p class="text-xs font-semibold tracking-wider text-gray-100 uppercase">Menu</p>
         <ul class="mt-4 flex flex-col gap-1">
             <li>
                 <a

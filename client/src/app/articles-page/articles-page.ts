@@ -133,7 +133,7 @@ export class ArticlesPage implements OnInit {
       this.articlesService.postArticle(formData).subscribe({
         next: (response) => {
           console.log('Article posted successfully', response);
-          this.articles.unshift({ ...response, isMenuOpen: false })
+          
           this.togglePosting(); 
            this.postForm.reset();
         },

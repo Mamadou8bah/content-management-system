@@ -12,6 +12,7 @@ const cors=require('cors')
 
 
 const app=express()
+const port = process.env.PORT || 4000
 
 
 app.use(cors())
@@ -31,8 +32,8 @@ app.use('/test',(req,res)=>{
 connectToDb().then(() => {
         return startRolesSeeding()
 }).then(() => {
-        app.listen(4000, () => {
-                console.log('App running at 4000');
+        app.listen(port, () => {
+                console.log(`App running at ${port}`);
         });
 }).catch((err) => {
         console.error('Failed to start server',err)

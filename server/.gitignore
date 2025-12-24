@@ -9,5 +9,6 @@ yarn-error.log
 
 # Miscellaneous
 .env
+.env.*
 .DS_Store
 /coverage

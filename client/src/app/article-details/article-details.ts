@@ -13,6 +13,7 @@ import { ArticlesService } from '../services/articles.service';
 export class ArticleDetails implements OnInit {
   article: any = null;
   notFound = false;
+  loading = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -23,6 +24,7 @@ export class ArticleDetails implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.notFound = true;
+      this.loading = false;
       return;
     }
     console.log(id);
@@ -32,6 +34,7 @@ export class ArticleDetails implements OnInit {
         if (!article || article.isDeleted === true) {
           this.notFound = true;
           console.log('Article not found or is deleted');
+          this.loading = false;
           return;
         }
         this.article = {
@@ -41,10 +44,12 @@ export class ArticleDetails implements OnInit {
           publishedBy:   article.author?.fullname || 'Unknown',
           body: article.content || article.body
         };
+        this.loading = false;
       },
       error: () => {
         this.notFound = true;
         console.log('Error fetching article');
+        this.loading = false;
       }
     });
   }

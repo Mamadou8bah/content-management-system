@@ -18,6 +18,8 @@ export class ArticlesPage implements OnInit {
   isPosting: boolean = false;
   userRole=localStorage.getItem('cms_role');
 
+  loading = true;
+
   selectedFile: File | null = null;
 
   constructor(private fb: FormBuilder, private elementRef: ElementRef, private articlesService: ArticlesService) {
@@ -28,8 +30,14 @@ export class ArticlesPage implements OnInit {
   }
 
   ngOnInit() {
-    this.articlesService.getArticles().subscribe((articles: any[]) => {
-      this.articles = articles.filter((a) => a.status === 'published').map((article) => ({ ...article, isMenuOpen: false }));
+    this.articlesService.getArticles().subscribe({
+      next: (articles: any[]) => {
+        this.articles = articles.filter((a) => a.status === 'published').map((article) => ({ ...article, isMenuOpen: false }));
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 

@@ -1,4 +1,8 @@
 <section class="flex justify-center items-center flex-col ">
+        <div *ngIf="loading" class="flex justify-center items-center min-h-[200px] w-full">
+            <div class="loader"></div>
+        </div>
+        <ng-container *ngIf="!loading">
     <button (click)="togglePosting()" *ngIf="!isPosting && !isViewer()"
   class="fixed bottom-8 right-8 sm:right-36 z-50 
          flex items-center justify-center p-4 
@@ -81,6 +85,7 @@
             </div>
         </div>
     </div>
+    </ng-container>
 
 
 

@@ -16,23 +16,25 @@ export class UsersPage implements OnInit {
   users: any[] = [];
   sourceUsers: any[] = [];
   roles = ROLES;
-  userRole=localStorage.getItem('cms_role');
+  userRole = localStorage.getItem('cms_role');
   errorMessage: string = '';
   searchTerm: string = '';
   roleFilter: string = '';
+  loading = true;
 
   constructor(private usersService: Users) {}
 
-  ngOnInit() {
-    
+  ngOnInit(): void {
     this.getUsers().subscribe({
       next: (users) => {
-        this.sourceUsers = users.map(user => ({ ...user, isMenuOpen: false }));
+        this.sourceUsers = users.map((user: any) => ({ ...user, isMenuOpen: false }));
         this.applyFilters();
+        this.loading = false;
       },
       error: (err) => {
         console.error('Error fetching users:', err);
         this.errorMessage = 'Failed to load users. ' + (err.error?.message || err.message);
+        this.loading = false;
       }
     });
   }

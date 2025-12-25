@@ -1,6 +1,11 @@
 <section class="min-h-screen bg-white px-4 py-12 sm:px-6 lg:px-8 rounded-[3rem]">
   <div class="mx-auto max-w-3xl">
 
+    <div *ngIf="loading" class="flex justify-center items-center min-h-[200px]">
+      <div class="loader"></div>
+    </div>
+    <ng-container *ngIf="!loading">
+
     <div *ngIf="article && !notFound; else notFoundTpl" class="space-y-8">
 
       <header class="space-y-4">
@@ -58,6 +63,7 @@
       </article>
 
     </div>
+    </ng-container>
 
    
     <ng-template #notFoundTpl>

@@ -20,7 +20,7 @@
         <div *ngFor="let article of articles" class="px-9 flex flex-col justify-center border-b-2 border-gray-200 py-6 relative">
             <div class="flex flex-row gap-2 items-center m-2">
                 <div class="w-[1rem] h-[1rem] rounded-full">
-                    <img class="w-full h-full object-cover" src="https://www.svgrepo.com/show/384674/account-avatar-profile-user-11.svg" alt="">
+                    <img class="w-full h-full object-cover" [src]="article.author.profilePhotoUrl" alt="">
                 </div>
                 <p class="font-light">In ContentFlow By <span class="font-bold">{{article.author.fullname}}</span></p>
             </div>

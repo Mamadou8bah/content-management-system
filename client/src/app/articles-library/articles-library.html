@@ -98,6 +98,11 @@
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                 Share Article
               </button>
+              <button (click)="startEditArticle(article); openPostMenu(article)" 
+                class="flex items-center px-4 py-2.5 text-sm text-blue-600 hover:bg-blue-50 transition-colors gap-3">
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"></path></svg>
+                Edit Article
+              </button>
 
               <button *ngIf="article.status === 'Published'" (click)="unpublishArticle(article); openPostMenu(article)" 
                 class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
@@ -158,12 +163,14 @@
 
 
      <form [formGroup]="postForm" (ngSubmit)="onSubmit()" *ngIf="isPosting"
-        class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-            w-[95%] max-w-lg p-8 z-[60]
-            bg-white/80 backdrop-blur-xl border border-white/20 
-            shadow-2xl rounded-3xl flex flex-col gap-5">
+      class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+        w-[95%] max-w-lg p-8 z-[60]
+        bg-white/80 backdrop-blur-xl border border-white/20 
+        shadow-2xl rounded-3xl flex flex-col gap-5">
 
-        <h2 class="text-2xl font-bold text-gray-800 tracking-tight">Post Article</h2>
+        <div *ngIf="postingLoader" class="flex justify-center mb-4"><div class="loader-bar"></div></div>
+
+      <h2 class="text-2xl font-bold text-gray-800 tracking-tight">{{ isEditing ? 'Edit Article' : 'Post Article' }}</h2>
         
         <div class="space-y-1">
             <label for="title" class="text-sm font-semibold text-gray-600 ml-1">Title</label>
@@ -195,9 +202,9 @@
                 class="px-6 py-2.5 rounded-full font-medium text-gray-600 hover:bg-gray-100 transition-colors">
                 Cancel
             </button>
-            <button type="submit" 
-                class="px-8 py-2.5 rounded-full font-medium text-white bg-black hover:bg-gray-800 shadow-lg active:scale-95 transition-all">
-                Post Article
+            <button type="submit" [disabled]="postingLoader"
+              class="px-8 py-2.5 rounded-full font-medium text-white bg-black hover:bg-gray-800 shadow-lg active:scale-95 transition-all">
+              {{ isEditing ? 'Update Article' : 'Post Article' }}
             </button>
         </div>
     </form>

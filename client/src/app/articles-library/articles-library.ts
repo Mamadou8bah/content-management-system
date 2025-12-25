@@ -28,6 +28,10 @@ export class ArticlesLibrary {
   filterOption: string = '';
 
   loading = true;
+  postingLoader = false;
+
+  isEditing: boolean = false;
+  editingArticle: any = null;
 
 
   constructor(private fb: FormBuilder, private elementRef: ElementRef, private articleService:ArticlesService) {
@@ -102,6 +106,23 @@ export class ArticlesLibrary {
 
   togglePosting() {
     this.isPosting = !this.isPosting;
+    if (this.isPosting) {
+      this.isEditing = false;
+      this.editingArticle = null;
+      this.postForm.reset();
+      this.fileToUpload = null;
+    }
+  }
+
+  startEditArticle(article: any) {
+    this.isEditing = true;
+    this.isPosting = true;
+    this.editingArticle = article;
+    this.postForm.patchValue({
+      title: article.title,
+      content: article.content || article.body || ''
+    });
+    this.fileToUpload = null;
   }
 
   openPostMenu(clickedArticle: any) {
@@ -122,39 +143,58 @@ export class ArticlesLibrary {
   }
 
   onSubmit() {
-    if (this.postForm.valid) {
-    const formData = new FormData();
-    
-    // Safer way to access values
+    if (!this.postForm.valid) return;
+    this.postingLoader = true;
     const { title, content } = this.postForm.value;
+    const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
-    
     if (this.fileToUpload) {
       formData.append('image', this.fileToUpload, this.fileToUpload.name);
     }
 
-    this.articleService.postArticle(formData).subscribe({
-      next: (response) => {
-        console.log('Article posted successfully', response);
-
-        const created = response?.article ?? response;
-        const newArticle = { ...created, isMenuOpen: false };
-        
-        
-        this.sourceArticles.unshift(newArticle);
-        this.applyFilters();
-
-        this.isPosting = false; 
-        this.postForm.reset();
-        this.fileToUpload = null; 
-      },
-      error: (err) => {
-        console.error('Error posting article', err);
-        
-      }
-    });
-  }
+    if (this.isEditing && this.editingArticle) {
+      // Edit existing article
+      this.articleService.updateArticle(this.editingArticle._id, formData).subscribe({
+        next: (response) => {
+          const updated = response?.article ?? response;
+          // Update in sourceArticles
+          const idx = this.sourceArticles.findIndex(a => a._id === this.editingArticle._id);
+          if (idx !== -1) {
+            this.sourceArticles[idx] = { ...this.sourceArticles[idx], ...updated, isMenuOpen: false };
+          }
+          this.applyFilters();
+          this.isPosting = false;
+          this.isEditing = false;
+          this.editingArticle = null;
+          this.postForm.reset();
+          this.fileToUpload = null;
+          this.postingLoader = false;
+        },
+        error: (err) => {
+          console.error('Error updating article', err);
+          this.postingLoader = false;
+        }
+      });
+    } else {
+      // Create new article
+      this.articleService.postArticle(formData).subscribe({
+        next: (response) => {
+          const created = response?.article ?? response;
+          const newArticle = { ...created, isMenuOpen: false };
+          this.sourceArticles.unshift(newArticle);
+          this.applyFilters();
+          this.isPosting = false;
+          this.postForm.reset();
+          this.fileToUpload = null;
+          this.postingLoader = false;
+        },
+        error: (err) => {
+          console.error('Error posting article', err);
+          this.postingLoader = false;
+        }
+      });
+    }
   }
 
   deleteArticle(article: any) {

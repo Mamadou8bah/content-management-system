@@ -22,3 +22,14 @@
 	66% {background-size: 20% 100%,20% 100%,20% 10% }
 	100%{background-size: 20% 100%,20% 100%,20% 100%}
 }
+
+/* Loader bar for posting/registering */
+.loader-bar {
+  width: 90px;
+  height: 14px;
+  background: repeating-linear-gradient(90deg,#000 0 calc(25% - 5px),#0000 0 25%) left/calc(4*100%/3) 100%;
+  animation: loader-bar-anim 0.5s infinite linear;
+}
+@keyframes loader-bar-anim {
+    100% {background-position: right}
+}

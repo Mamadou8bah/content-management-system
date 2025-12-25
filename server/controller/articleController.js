@@ -29,8 +29,11 @@ const createArticleHandler=async(req,res)=>{
 };
 const getArticleByIdHandler=async(req,res)=>{
     try{
+        console.log('Article ID from params:');
         const {id}=req.params;
+       
         const article=await getArticleById(id);
+        
         res.status(200).json(article);
     }catch(err){
         res.status(404).json({ error: err.message });

@@ -27,12 +27,16 @@ const publishArticle=async(id)=>{
     return article.populate('author');
 }
 const getArticleById=async(id)=>{
+
+    console.log('Fetching article with ID:', id);
     const article=await Article.findById(id).populate('author').populate('publishedBy');
     if(!article || article.isDeleted) throw new Error('Article not found');
+    console.log('Found article:', article);
     return article;
 };
 
 const getArticles=async(filter={})=>{
+    console.log('Fetching articles with filter:', filter);
     const query={ isDeleted:false };
     if(filter.status) query.status=filter.status;
     if(filter.author) query.author=filter.author;

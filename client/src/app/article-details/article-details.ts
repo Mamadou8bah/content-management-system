@@ -25,22 +25,26 @@ export class ArticleDetails implements OnInit {
       this.notFound = true;
       return;
     }
+    console.log(id);
+    console.log('Fetching article details for ID:', id);
     this.articlesService.getArticleById(id).subscribe({
       next: (article) => {
-        if (!article || article.isDeleted) {
+        if (!article || article.isDeleted === true) {
           this.notFound = true;
+          console.log('Article not found or is deleted');
           return;
         }
         this.article = {
           ...article,
           title: article.title,
           imageUrl: article.imageUrl,
-          publishedBy: article.publishedBy?.name || article.author?.name || 'Unknown',
+          publishedBy:   article.author?.fullname || 'Unknown',
           body: article.content || article.body
         };
       },
       error: () => {
         this.notFound = true;
+        console.log('Error fetching article');
       }
     });
   }

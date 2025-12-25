@@ -13,13 +13,13 @@ export class ArticlesService {
   constructor(private http: HttpClient) {}
 
   getArticles(): Observable<any> {
-    console.log('Working')
     return this.http.get(`${this.apiUrl}/articles`);
     
   }
 
-  getArticleById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/articles/${id}`);
+  getArticleById(articleId: string): Observable<any> {
+    console.log('FAYUO DDUSF AF TS TTA UXDSAYDT UTUODSFAUI')
+    return this.http.get(`${this.apiUrl}/articles/${articleId}`);
   }
   postArticle(formdata: FormData): Observable<any> {
     console.log('Post Working')

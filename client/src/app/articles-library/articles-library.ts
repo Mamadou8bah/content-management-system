@@ -27,6 +27,8 @@ export class ArticlesLibrary {
   searchTerm: string = '';
   filterOption: string = '';
 
+  loading = true;
+
 
   constructor(private fb: FormBuilder, private elementRef: ElementRef, private articleService:ArticlesService) {
     this.postForm = this.fb.group({
@@ -83,13 +85,18 @@ export class ArticlesLibrary {
   }
 
   ngOnInit() {
-    this.articleService.getArticles().subscribe((a: any[]) => {
-      this.sourceArticles = a.map((article) => ({
-        ...article,
-        isMenuOpen: false,
-      }));
-
-      this.applyFilters();
+    this.articleService.getArticles().subscribe({
+      next: (a: any[]) => {
+        this.sourceArticles = a.map((article) => ({
+          ...article,
+          isMenuOpen: false,
+        }));
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 

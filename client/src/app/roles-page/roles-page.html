@@ -1,4 +1,8 @@
 <div class="min-h-screen p-4 md:p-8 bg-white rounded-[3rem] selection:bg-emerald-200">
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[200px] w-full">
+    <div class="loader"></div>
+  </div>
+  <ng-container *ngIf="!loading">
   <div class="mx-auto max-w-6xl">
     
     <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -124,4 +128,5 @@
       </div>
     </div>
   </div>
+</ng-container>
 </div>

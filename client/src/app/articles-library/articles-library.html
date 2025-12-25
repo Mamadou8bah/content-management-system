@@ -1,4 +1,8 @@
 <section class="max-w-6xl mx-auto p-8 bg-white min-h-screen flex justify-center items-center flex-col rounded-[3rem]">
+  <div *ngIf="loading" class="flex justify-center items-center min-h-[200px] w-full">
+    <div class="loader"></div>
+  </div>
+  <ng-container *ngIf="!loading">
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 w-full">
     <div>
       <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Articles Library</h1>
@@ -197,4 +201,5 @@
             </button>
         </div>
     </form>
+  </ng-container>
 </section>

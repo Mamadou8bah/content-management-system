@@ -15,9 +15,8 @@ export class RolesPage {
   showModal = false;
   newRoleName = '';
 
-  constructor(private rolesService: Roles){
-
-  }
+  loading = true;
+  constructor(private rolesService: Roles) {}
 
 
   allPermissions: any[] = [];
@@ -50,12 +49,30 @@ isRoleSelected(role: any): boolean {
 }
 
 ngOnInit() {
-  this.rolesService.getRoles().subscribe((roles: any[]) => {
-    this.roles = roles || [];
-    this.selectedRole = this.roles.length ? this.roles[0] : null;
+  let rolesLoaded = false;
+  let permissionsLoaded = false;
+  this.rolesService.getRoles().subscribe({
+    next: (roles: any[]) => {
+      this.roles = roles || [];
+      this.selectedRole = this.roles.length ? this.roles[0] : null;
+      rolesLoaded = true;
+      if (rolesLoaded && permissionsLoaded) this.loading = false;
+    },
+    error: () => {
+      rolesLoaded = true;
+      if (rolesLoaded && permissionsLoaded) this.loading = false;
+    }
   });
-  this.rolesService.getPermissions().subscribe((permissions: any[]) => {
-    this.allPermissions = permissions || [];
+  this.rolesService.getPermissions().subscribe({
+    next: (permissions: any[]) => {
+      this.allPermissions = permissions || [];
+      permissionsLoaded = true;
+      if (rolesLoaded && permissionsLoaded) this.loading = false;
+    },
+    error: () => {
+      permissionsLoaded = true;
+      if (rolesLoaded && permissionsLoaded) this.loading = false;
+    }
   });
 }
 

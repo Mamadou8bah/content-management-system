@@ -61,13 +61,13 @@
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-100">
-        <tr *ngFor="let article of articles" class="hover:bg-gray-50/50 transition-colors group">
+        <tr *ngFor="let article of articles" class="hover:bg-gray-50/50 transition-colors group" >
           <td class="px-6 py-4 whitespace-nowrap">
             <img *ngIf="article.imageUrl"  [src]="article.imageUrl" alt="" class="h-[6rem] w-[12rem] object-cover rounded-lg ring-1 ring-gray-200 shadow-sm" />
             <img *ngIf="!article.imageUrl" src="logo.png" alt="" class="h-[6rem] w-[12rem] object-cover rounded-lg ring-1 ring-gray-200 shadow-sm"/>
           </td>
           
-          <td class="px-6 py-4 cursor-pointer" [routerLink]="['/articles', article.id]">
+          <td class="px-6 py-4 cursor-pointer" [routerLink]="['/articles', article._id]">
             <div class=" font-semibold text-gray-900">{{ article.title }}</div>
           </td>
 
@@ -104,13 +104,13 @@
                 Edit Article
               </button>
 
-              <button *ngIf="article.status === 'Published'" (click)="unpublishArticle(article); openPostMenu(article)" 
+              <button *ngIf="article.status === 'Published' && canPublishOrUnpublish()" (click)="unpublishArticle(article); openPostMenu(article)" 
                 class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                 Unpublish
               </button>
-              <button *ngIf="article.status !== 'Published'" (click)="publishArticle(article); openPostMenu(article)" 
-                class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3">
+              <button *ngIf="article.status !== 'Published' && canPublishOrUnpublish()" (click)="publishArticle(article); openPostMenu(article)" 
+                class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors gap-3" >
                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                 Publish
               </button>

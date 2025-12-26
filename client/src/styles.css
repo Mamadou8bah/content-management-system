@@ -27,9 +27,24 @@
 .loader-bar {
   width: 90px;
   height: 14px;
-  background: repeating-linear-gradient(90deg,#000 0 calc(25% - 5px),#0000 0 25%) left/calc(4*100%/3) 100%;
+  background: repeating-linear-gradient(90deg,#eac510 0 calc(25% - 5px),#0000 0 25%) left/calc(4*100%/3) 100%;
   animation: loader-bar-anim 0.5s infinite linear;
 }
 @keyframes loader-bar-anim {
     100% {background-position: right}
+}
+
+
+
+.loader-logout {
+  width: 120px;
+  height: 20px;
+  -webkit-mask: linear-gradient(90deg,#8d0303 70%,#0000 0) left/20% 100%;
+  background:
+   linear-gradient(#000 0 0) left -25% top 0 /20% 100% no-repeat
+   #ddd;
+  animation: l7 1s infinite steps(6);
+}
+@keyframes l7 {
+    100% {background-position: right -25% top 0}
 }

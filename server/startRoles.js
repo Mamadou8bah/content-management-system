@@ -27,7 +27,8 @@ const ROLE_PERMISSION_MAP = {
   Contributor: [
     'create_article',
     'edit_article',
-    'view_article'
+    'view_article',
+    'delete_article'
   ],
 
   Viewer: [

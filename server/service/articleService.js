@@ -1,5 +1,5 @@
 const Article=require('../model/Article');
-
+const User=require('../model/User');
 const cloudinaryUploader=require('../utils/cloudinaryUploader');
 
 const createArticle=async(data,image)=>{
@@ -18,8 +18,12 @@ const createArticle=async(data,image)=>{
     await article.save();
     return article;
 };
-const publishArticle=async(id)=>{
+const publishArticle=async(id,userId)=>{
     const article=await Article.findById(id);
+    const user=await User.findById(userId).populate('roleId');
+    if(user.roleId.name==='Contributor'){
+        throw new Error('Unauthorized to publish articles');
+    }
     if(!article || article.isDeleted) throw new Error('Article not found');
     article.status='published';
     article.publishedAt=new Date();
@@ -43,10 +47,17 @@ const getArticles=async(filter={})=>{
     return Article.find(query).populate('author').populate('publishedBy').sort({ createdAt:-1 });
 };
 
-const updateArticle=async(id,updates)=>{
-    const article=await Article.findById(id);
-    if(!article || article.isDeleted) throw new Error('Article not found');
+const updateArticle=async(id,updates,userId)=>{
 
+
+    
+    const article=await Article.findById(id);
+    const updatingUser=await User.findById(userId).populate('roleId');
+
+    if(updatingUser.roleId.name==='Contributor' && !userId.equals(article.author._id)){
+
+        throw new Error('Unauthorized to update this article');
+    }
     if(updates.title !== undefined) article.title=updates.title;
     if(updates.content !== undefined) article.content=updates.content;
     if(updates.status !== undefined) {
@@ -68,8 +79,15 @@ const updateArticle=async(id,updates)=>{
     return article.populate('author').populate('publishedBy');
 };
 
-const softDeleteArticle=async(id)=>{
+const softDeleteArticle=async(id,userId)=>{
+    
     const article=await Article.findById(id);
+    const updatingUser=await User.findById(userId).populate('roleId');
+
+    if(updatingUser.roleId.name==='Contributor' && !userId.equals(article.author._id)){
+
+        throw new Error('Unauthorized to delete this article');
+    }
     if(!article || article.isDeleted) throw new Error('Article not found');
     article.isDeleted=true;
     await article.save();

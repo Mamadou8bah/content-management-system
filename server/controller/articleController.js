@@ -53,7 +53,8 @@ const updateArticleHandler=async(req,res)=>{
     try{
         const {id}=req.params;
         const updates=req.body;
-        const article=await updateArticle(id,updates);
+        const userId=req.user?._id;
+        const article=await updateArticle(id,updates, userId);
         res.status(200).json({
             message:'Article updated successfully',
             article
@@ -66,7 +67,8 @@ const updateArticleHandler=async(req,res)=>{
 const softDeleteArticleHandler=async(req,res)=>{
     try{
         const {id}=req.params;
-        const result=await softDeleteArticle(id);
+        const userId=req.user?._id;
+        const result=await softDeleteArticle(id,userId);
         res.status(200).json(result);
     }catch(err){
         res.status(404).json({ error: err.message });
@@ -88,7 +90,8 @@ const restoreArticleHandler=async(req,res)=>{
 const publishArticleHandler=async(req,res)=>{
     try{
         const {id}=req.params;
-        const article=await publishArticle(id);
+        const userId=req.user?._id;
+        const article=await publishArticle(id,userId);
         res.status(200).json({
             message:'Article published successfully',
             article

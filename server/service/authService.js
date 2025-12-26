@@ -69,6 +69,7 @@ const login= async(email,password)=>{
   });
 
   return {
+    userId:user._id,
     accessToken:jwtService.generateAccessToken(user),
     refreshToken:refreshToken,
     role:user.roleId ? user.roleId.name : null,

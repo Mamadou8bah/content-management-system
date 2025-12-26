@@ -17,6 +17,7 @@ export class LoginPage {
   form: FormGroup;
 
   errorMessage: string = '';
+  loading: boolean = false;
   constructor(
     private fb: FormBuilder,
     private loginService: Login,
@@ -49,17 +50,21 @@ export class LoginPage {
   }
 
   login() {
+    this.loading = true;
     this.loginService.loginUser(this.form.value).subscribe({
       next: (response) => {
+        this.loading = false;
         console.log('Login successful', response);
         localStorage.setItem('cms_access_token', response.accessToken);
         localStorage.setItem('cms_refresh_token', response.refreshToken);
         localStorage.setItem('cms_role', response.role);
         localStorage.setItem('cms_fullname', response.fullname);
         localStorage.setItem('cms_profilePhotoUrl', response.profilePhotoUrl);
+        localStorage.setItem('cms_userId', response.userId);
         this.router.navigate(['/']);
       },
       error: (err) => {
+        this.loading = false;
         console.error(err);
         this.errorMessage = err.error?.error || 'An error occurred during login.';
       }
@@ -67,6 +72,7 @@ export class LoginPage {
   }
 
   register() {
+    this.loading = true;
     const formData = new FormData();
     formData.append('fullname', this.form.value.username);
     formData.append('password', this.form.value.password);
@@ -78,13 +84,17 @@ export class LoginPage {
     }
 
     this.loginService.registerUser(formData).subscribe({
-      next: () => (this.isLoginMode = true),
+      next: () => {
+        this.loading = false;
+        this.isLoginMode = true;
+        alert('Registration successful! Please log in.');
+      },
       error: (err) => {
+        this.loading = false;
         console.error(err);
         this.errorMessage = err.error?.error || 'An error occurred during registration.';
       }
     });
-    alert('Registration successful! Please log in.');
   }
 
   private dataURLtoBlob(dataURL: string): Blob {

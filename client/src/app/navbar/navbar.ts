@@ -11,8 +11,10 @@ import { Login } from '../services/login';
   styleUrl: './navbar.css',
 })
 export class Navbar {
-  @Input() visible: boolean = true;
+  @Input() visible: boolean = false;
   userRole: string | null = localStorage.getItem('cms_role');
+
+  loading: boolean = false;
 
   constructor(private router: Router, private loginService: Login) {
 
@@ -30,16 +32,18 @@ export class Navbar {
   }
 
   logout():void {
+    this.loading = true;
     this.loginService.logoutUser().subscribe({
       next: () => {
+        this.loading = false;
         console.log('Logout successful');
         this.clearSessionAndRedirect(); 
       },
       error: (err) => {
+        this.loading = false;
         console.error('Logout failed', err);
       }
     });
-
   }
 
   private clearSessionAndRedirect() {

@@ -63,8 +63,14 @@ export class ArticlesLibrary {
 
   private applyFilters() {
     const term = (this.searchTerm ?? '').trim().toLowerCase();
+    const currentUserRole = localStorage.getItem('cms_role');
+    const currentUserId = localStorage.getItem('cms_userId');
 
     let filtered = this.sourceArticles.filter((article) => {
+      // Only show contributor's own articles
+      if (currentUserRole === 'Contributor' && article.author?._id !== currentUserId) {
+        return false;
+      }
       if (!term) return true;
       const title = (article.title ?? '').toLowerCase();
       const author = (article.author?.fullname ?? '').toLowerCase();
@@ -225,5 +231,10 @@ export class ArticlesLibrary {
   updateArticle(article: any, updates: any) {
     Object.assign(article, updates);
     return this.articleService.updateArticle(article._id, updates).subscribe();
+  }
+
+  canPublishOrUnpublish(): boolean {
+    const userRole = localStorage.getItem('cms_role');
+    return userRole === 'SuperAdmin' || userRole === 'Manager';
   }
 }

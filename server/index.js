@@ -19,6 +19,9 @@ const port = process.env.PORT || 4000
 
 app.use(cors())
  
+app.get('/',(req,res)=>{
+    res.send('Welcome to the Content Management System')
+})
 app.use(express.json())
 app.use('/auth',authRouter)
 app.use('/roles',roleRouter)

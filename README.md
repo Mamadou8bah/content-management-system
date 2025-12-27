@@ -49,12 +49,12 @@ This project is a full-stack Content Management System (CMS) engineered for orga
 #### Role Routes (`/roles`)
 | Method | Path                | Description                  | Auth Required | Permission           |
 |--------|---------------------|------------------------------|---------------|----------------------|
-| POST   | `/`                 | Create new role              | No            | -                    |
-| GET    | `/`                 | List all roles               | No            | -                    |
-| GET    | `/:id`              | Get role by ID               | No            | -                    |
-| PUT    | `/:id`              | Update role                  | No            | -                    |
-| DELETE | `/:id`              | Delete role                  | No            | -                    |
-| PUT    | `/:id/permissions`  | Set role permissions         | No            | -                    |
+| POST   | `/`                 | Create new role              | Yes           | `manage_roles`       |
+| GET    | `/`                 | List all roles               | Yes           | `view_roles`         |
+| GET    | `/:id`              | Get role by ID               | Yes           | `view_roles`         |
+| PUT    | `/:id`              | Update role                  | Yes           | `manage_roles`       |
+| DELETE | `/:id`              | Delete role                  | Yes           | `manage_roles`       |
+| PUT    | `/:id/permissions`  | Set role permissions         | Yes           | `manage_roles`       |
 
 #### Permission Routes (`/permissions`)
 | Method | Path         | Description                | Auth Required |

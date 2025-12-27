@@ -26,7 +26,7 @@ This project is a full-stack Content Management System (CMS) engineered for orga
 
 ### Backend (Express API) Endpoints
 
-#### Auth Routes (`/api/auth`)
+#### Auth Routes (`/auth`)
 | Method | Path             | Description                | Auth Required |
 |--------|------------------|----------------------------|---------------|
 | POST   | `/register`      | Register new user          | No            |
@@ -36,7 +36,7 @@ This project is a full-stack Content Management System (CMS) engineered for orga
 | POST   | `/revoke-token`  | Revoke refresh token       | Yes           |
 | GET    | `/me`            | Get current user profile   | Yes           |
 
-#### User Routes (`/api/users`)
+#### User Routes (`/users`)
 | Method | Path         | Description                | Auth Required | Permission         |
 |--------|--------------|----------------------------|---------------|--------------------|
 | GET    | `/`          | List all users             | Yes           | `view_users`       |
@@ -46,7 +46,7 @@ This project is a full-stack Content Management System (CMS) engineered for orga
 
 
 
-#### Role Routes (`/api/roles`)
+#### Role Routes (`/roles`)
 | Method | Path                | Description                  | Auth Required | Permission           |
 |--------|---------------------|------------------------------|---------------|----------------------|
 | POST   | `/`                 | Create new role              | No            | -                    |
@@ -56,12 +56,12 @@ This project is a full-stack Content Management System (CMS) engineered for orga
 | DELETE | `/:id`              | Delete role                  | No            | -                    |
 | PUT    | `/:id/permissions`  | Set role permissions         | No            | -                    |
 
-#### Permission Routes (`/api/permissions`)
+#### Permission Routes (`/permissions`)
 | Method | Path         | Description                | Auth Required |
 |--------|--------------|----------------------------|---------------|
 | GET    | `/`          | List all permissions       | No            |
 
-#### Article Routes (`/api/articles`)
+#### Article Routes (`/articles`)
 | Method | Path                | Description                        | Auth Required | Permission           |
 |--------|---------------------|------------------------------------|---------------|----------------------|
 | POST   | `/`                 | Create article                     | Yes           | `create_article`     |

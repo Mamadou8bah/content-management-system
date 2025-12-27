@@ -104,8 +104,10 @@ This project is a full-stack Content Management System (CMS) engineered for orga
 ## System Architecture
 ```mermaid
 flowchart TD
+    subgraph Frontend [Angular UI]
         A1[Login Page]
         A3[Articles Page]
+        A4[Article Details Page]
         A5[Articles Library Page]
         A6[Users Page]
         A7[Roles & Permissions Page]
@@ -117,6 +119,7 @@ flowchart TD
         B4[Roles & Permissions Module]
         B5[RBAC Middleware]
         B6[Cloudinary Service]
+    end
     subgraph Database [MongoDB]
         C1[Users]
         C2[Articles]

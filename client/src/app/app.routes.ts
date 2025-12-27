@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { RoleGuard } from './role.guard';
 import { ArticlesPage } from './articles-page/articles-page';
 import { UsersPage } from './users-page/users-page';
 import { RolesPage } from './roles-page/roles-page';
@@ -30,16 +31,21 @@ export const routes: Routes = [
     },
     {
         path: 'articles-library',
-        component: ArticlesLibrary
-
+        component: ArticlesLibrary,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['SuperAdmin', 'Manager', 'Contributor'] } 
     },
     {
         path: 'users',
-        component: UsersPage
+        component: UsersPage,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['SuperAdmin', 'Manager'] }
     },
     {
         path: 'roles',
-        component: RolesPage
+        component: RolesPage,
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['SuperAdmin'] }
     },
    
 ];

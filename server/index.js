@@ -3,6 +3,8 @@ const connectToDb=require('./config/dbConfig')
 const Role=require('./model/Role')
 const startRolesSeeding=require('./startRoles')
 
+const {main}=require('./seedUsers')
+
 const authRouter=require('./route/authRoutes')
 const roleRouter=require('./route/roleRoutes')
 const permissionRouter=require('./route/permissionRoutes')
@@ -32,6 +34,9 @@ app.use('/test',(req,res)=>{
 connectToDb().then(() => {
         return startRolesSeeding()
 }).then(() => {
+         main()
+}).
+then(() => {
         app.listen(port, () => {
                 console.log(`App running at ${port}`);
         });

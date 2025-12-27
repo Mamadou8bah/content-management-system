@@ -15,7 +15,12 @@ const register = async (userData, image) => {
     return res.status(400).json({ error: 'Email already in use' });
   };
 
+
   if (!userData.password) throw new Error('Password is required');
+  const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+  if (!strongPassword.test(userData.password)) {
+    throw new Error('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
+  }
 
 
   const saltRounds = parseInt(process.env.SALT_ROUNDS, 10) || 10;

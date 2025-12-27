@@ -204,7 +204,16 @@ export class ArticlesLibrary {
   }
 
   deleteArticle(article: any) {
-    this.articles = this.articles.filter((a) => a !== article);
+    this.articleService.softDeleteArticle(article._id).subscribe({
+      next: () => {
+        this.articles = this.articles.filter((a) => a._id !== article._id);
+        this.sourceArticles = this.sourceArticles.filter((a) => a._id !== article._id);
+      },
+      error: (err) => {
+        console.error('Failed to delete article', err);
+        // Optionally show a notification to the user
+      }
+    });
   }
   shareArticle(article: any) {
     const shareData = {
